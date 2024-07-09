@@ -1,22 +1,13 @@
-#!/usr/bin/env python3
-
-# Standard library imports
-
-# Remote library imports
 from flask import Flask, request, jsonify
-from flask_restful import Resource, Api
+from flask_restful import Api
 from flask_cors import CORS
-from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from sqlalchemy import MetaData
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-
-# Local imports
-from config import app, db, api, Config  # Correctly import Config from config.py
-
-# Import models after initializing db to avoid circular import
 from models import User, Artist, Artwork, Exhibition, ArtworkExhibition, Favorite
+from config import app, db, api, Config
 
 # Initialize Flask-Migrate
 migrate = Migrate(app, db)
@@ -37,10 +28,17 @@ def index():
 @app.route('/signup', methods=['POST'])
 def signup():
     data = request.get_json()
+    
+    # Validate password length
+    if len(data['password']) < 10:
+        return jsonify({'message': 'Password must be at least 10 characters long'}), 400
+    
     hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
     user = User(username=data['username'], email=data['email'], password=hashed_password, role='artist')
+    
     db.session.add(user)
     db.session.commit()
+    
     return jsonify({'message': 'User created successfully'})
 
 @app.route('/login', methods=['POST'])
