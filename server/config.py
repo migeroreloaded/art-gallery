@@ -1,5 +1,3 @@
-# config.py
-
 from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate
@@ -21,8 +19,7 @@ app.json.compact = False
 metadata = MetaData(naming_convention={
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
 })
-db = SQLAlchemy(metadata=metadata)
-db.init_app(app)
+db = SQLAlchemy(app, metadata=metadata)  # Pass app and metadata here
 migrate = Migrate(app, db)
 api = Api(app)
 CORS(app)

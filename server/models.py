@@ -14,6 +14,14 @@ class User(db.Model, SerializerMixin):
 
     favorites = db.relationship('Favorite', backref='user', lazy=True)
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'role': self.role,
+        }
+
 class Artist(db.Model, SerializerMixin):
     __tablename__ = 'artists'
     id = db.Column(db.Integer, primary_key=True)
@@ -23,6 +31,15 @@ class Artist(db.Model, SerializerMixin):
     nationality = db.Column(db.String(50), nullable=False)
 
     artworks = db.relationship('Artwork', backref='artist', lazy=True)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'biography': self.biography,
+            'birthdate': self.birthdate.isoformat(),
+            'nationality': self.nationality,
+        }
 
 class Artwork(db.Model, SerializerMixin):
     __tablename__ = 'artworks'
@@ -37,6 +54,17 @@ class Artwork(db.Model, SerializerMixin):
     exhibitions = db.relationship('ArtworkExhibition', backref='artwork', lazy=True)
     favorites = db.relationship('Favorite', backref='artwork', lazy=True)
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'medium': self.medium,
+            'style': self.style,
+            'price': float(self.price),
+            'available': self.available,
+            'artist_id': self.artist_id,
+        }
+
 class Exhibition(db.Model, SerializerMixin):
     __tablename__ = 'exhibitions'
     id = db.Column(db.Integer, primary_key=True)
@@ -44,15 +72,38 @@ class Exhibition(db.Model, SerializerMixin):
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=False)
     description = db.Column(db.Text, nullable=True)
+    artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'), nullable=False)
 
     artworks = db.relationship('ArtworkExhibition', backref='exhibition', lazy=True)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'start_date': self.start_date.isoformat(),
+            'end_date': self.end_date.isoformat(),
+            'description': self.description,
+            'artist_id': self.artist_id,
+        }
 
 class ArtworkExhibition(db.Model, SerializerMixin):
     __tablename__ = 'artwork_exhibitions'
     artwork_id = db.Column(db.Integer, db.ForeignKey('artworks.id'), primary_key=True)
     exhibition_id = db.Column(db.Integer, db.ForeignKey('exhibitions.id'), primary_key=True)
 
+    def to_dict(self):
+        return {
+            'artwork_id': self.artwork_id,
+            'exhibition_id': self.exhibition_id,
+        }
+
 class Favorite(db.Model, SerializerMixin):
     __tablename__ = 'favorites'
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     artwork_id = db.Column(db.Integer, db.ForeignKey('artworks.id'), primary_key=True)
+
+    def to_dict(self):
+        return {
+            'user_id': self.user_id,
+            'artwork_id': self.artwork_id,
+        }
