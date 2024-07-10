@@ -1,19 +1,16 @@
 from flask import Flask, request, jsonify
-from flask_restful import Api
-from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from sqlalchemy import MetaData
-from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from models import User, Artist, Artwork, Exhibition, ArtworkExhibition, Favorite
-from config import app, db, api, Config
+from config import create_app, db
+from flask_bcrypt import Bcrypt
 
-# Initialize Flask-Migrate
-migrate = Migrate(app, db)
+# Create app instance
+app = create_app('development')
 
-# Initialize Flask-Bcrypt and Flask-Login
+# Initialize Flask-Bcrypt
 bcrypt = Bcrypt(app)
+
+# Initialize Flask-Login
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
@@ -158,6 +155,16 @@ def delete_event(id):
     db.session.delete(event)
     db.session.commit()
     return jsonify({'message': 'Event deleted successfully'})
+
+# Error Handlers
+@app.errorhandler(404)
+def not_found_error(error):
+    return jsonify({'message': 'Resource not found'}), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return jsonify({'message': 'Internal server error'}), 500
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
