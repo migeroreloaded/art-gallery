@@ -258,3 +258,55 @@ export const ArtworkLoading = styled.p`
   font-style: italic;
   color: #888;
 `;
+
+export const PageContainer = styled.div`
+  padding: 20px;
+  background-color: #f5f5f5;
+`;
+
+export const Header = styled.header`
+  text-align: center;
+  padding: 20px;
+  background-color: #ff416c;
+  color: #fff;
+`;
+
+export const ExhibitionHighlights = styled.div`
+  padding: 20px;
+`;
+
+export const ExhibitionList = styled.div`
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+`;
+
+export const ExhibitionCard = styled.div`
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  background-color: #fff;
+  margin: 10px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+export const ExhibitionTitle = styled.h3`
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+`;
+
+export const ExhibitionDescription = styled.p`
+  font-size: 1rem;
+  color: #555;
+`;
+
+export const Footer = styled.footer`
+  text-align: center;
+  padding: 20px;
+  background-color: #ff416c;
+  color: #fff;
+  margin-top: 20px;
+`;
