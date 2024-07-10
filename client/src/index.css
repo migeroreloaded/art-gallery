@@ -5,33 +5,9 @@
   --text: hsla(0, 0%, 100%, 0.88);
 }
 
-/* src/App.css */
-form {
-  margin: 20px 0;
-}
-
-form div {
-  margin-bottom: 10px;
-}
-
-label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-input, select, button {
-  padding: 8px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-button {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #45a049;
+body {
+  font-family: 'Arial', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
