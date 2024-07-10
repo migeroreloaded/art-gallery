@@ -1,22 +1,18 @@
 from flask import Flask, request, jsonify
-from flask_restful import Api
-from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from sqlalchemy import MetaData
-from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from models import User, Artist, Artwork, Exhibition, ArtworkExhibition, Favorite
-from config import app, db, api, Config
+from config import create_app, db
+from flask_bcrypt import Bcrypt
 
-# Initialize Flask extensions
-migrate = Migrate(app, db)
+# Create app instance
+app = create_app('development')
+
+# Initialize Flask-Bcrypt
 bcrypt = Bcrypt(app)
+
+# Initialize Flask-Login
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
-
-# Enable CORS
-CORS(app)
 
 @login_manager.user_loader
 def load_user(user_id):
