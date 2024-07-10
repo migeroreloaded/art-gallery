@@ -206,3 +206,55 @@ export const NavbarRight = styled.div`
     border: 1px solid #ccc;
   }
 `;
+
+// Artwork Style
+
+export const ArtworkGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Four columns of equal size */
+  grid-gap: 20px; /* Spacing between artworks */
+`;
+
+export const ArtworkContainer = styled.div`
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+export const ArtworkTitle = styled.h3`
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+`;
+
+export const ArtworkDescription = styled.p`
+  font-size: 1rem;
+  color: #555;
+`;
+
+export const ArtworkImage = styled.img`
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+`;
+
+export const ArtworkDetails = styled.div`
+  margin-top: 10px;
+  font-size: 0.9rem;
+`;
+
+export const ArtworkDetail = styled.p`
+  margin-bottom: 5px;
+`;
+
+export const ArtworkAvailability = styled.p`
+  font-weight: bold;
+  color: ${props => (props.available ? 'green' : 'red')};
+`;
+
+export const ArtworkLoading = styled.p`
+  font-style: italic;
+  color: #888;
+`;
