@@ -1,5 +1,3 @@
-# models.py
-
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 from config import db  # Ensure this line correctly imports db
@@ -50,6 +48,7 @@ class Artwork(db.Model, SerializerMixin):
     price = db.Column(db.Numeric(10, 2), nullable=False)
     available = db.Column(db.Boolean, default=True, nullable=False)
     artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'), nullable=False)
+    image = db.Column(db.String(255))  # Adjust the length as per your needs
 
     exhibitions = db.relationship('ArtworkExhibition', backref='artwork', lazy=True)
     favorites = db.relationship('Favorite', backref='artwork', lazy=True)
@@ -63,6 +62,7 @@ class Artwork(db.Model, SerializerMixin):
             'price': float(self.price),
             'available': self.available,
             'artist_id': self.artist_id,
+            'image': self.image  # Include image serialization if needed
         }
 
 class Exhibition(db.Model, SerializerMixin):
