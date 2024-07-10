@@ -34,7 +34,7 @@ const RegisterPage = ({ signIn, toggle }) => (
             To keep connected with us please login with your personal info
           </Paragraph>
           <GhostButton onClick={() => toggle(true)}>
-            Sign In
+            LOG IN
           </GhostButton>
         </LeftOverlayPanel>
 

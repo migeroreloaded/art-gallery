@@ -19,11 +19,11 @@ const LoginPage = ({ signIn, toggle }) => (
   <Container>
     <SignInContainer signinIn={signIn}>
       <Form>
-        <Title>Sign in</Title>
+        <Title>Log in</Title>
         <Input type='email' placeholder='Email' />
         <Input type='password' placeholder='Password' />
         <Anchor href='#'>Forgot your password?</Anchor>
-        <Button>Sign In</Button>
+        <Button>Log In</Button>
       </Form>
     </SignInContainer>
 
@@ -42,7 +42,7 @@ const LoginPage = ({ signIn, toggle }) => (
         <RightOverlayPanel signinIn={signIn}>
           <Title>Hello, Friend!</Title>
           <Paragraph>
-            Enter your personal details and start your journey with us
+            Enter your personal details and start your journey with art
           </Paragraph>
           <GhostButton onClick={() => toggle(false)}>
             Sign Up
