@@ -9,13 +9,14 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from models import User, Artist, Artwork, Exhibition, ArtworkExhibition, Favorite
 from config import app, db, api, Config
 
-# Initialize Flask-Migrate
+# Initialize Flask extensions
 migrate = Migrate(app, db)
-
-# Initialize Flask-Bcrypt and Flask-Login
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+
+# Enable CORS
+CORS(app)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -158,6 +159,16 @@ def delete_event(id):
     db.session.delete(event)
     db.session.commit()
     return jsonify({'message': 'Event deleted successfully'})
+
+# Error Handlers
+@app.errorhandler(404)
+def not_found_error(error):
+    return jsonify({'message': 'Resource not found'}), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return jsonify({'message': 'Internal server error'}), 500
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
