@@ -158,3 +158,51 @@ export const Paragraph = styled.p`
   letter-spacing: 0.5px;
   margin: 20px 0 30px;
 `;
+
+// Navbar styling
+
+export const NavbarContainer = styled.nav`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #ff416c;
+  color: #fff;
+`;
+
+export const NavbarLeft = styled.div`
+  .navbar-brand {
+    font-size: 1.5rem;
+    color: #fff;
+    text-decoration: none;
+  }
+`;
+
+export const NavbarRight = styled.div`
+  .navbar-nav {
+    display: flex;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-item {
+    margin-right: 10px;
+  }
+
+  .nav-link {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px;
+  }
+
+  .nav-link:hover {
+    text-decoration: underline;
+  }
+
+  .nav-search {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+`;
