@@ -15,13 +15,15 @@ import {
   Paragraph,
   Select
 } from './styles';
-import { useAuth } from './AuthContext';
+// Remove unused import
+// import { useAuth } from './AuthContext';
 
 const RegisterPage = ({ signIn, toggle }) => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    password: ''
+    password: '',
+    role: 'artist' // Default value
   });
   const [error, setError] = useState('');
 
@@ -95,32 +97,7 @@ const RegisterPage = ({ signIn, toggle }) => {
               LOG IN
             </GhostButton>
           </LeftOverlayPanel>
-      <OverlayContainer signinIn={signIn}>
-        <Overlay signinIn={signIn}>
-          <LeftOverlayPanel signinIn={signIn}>
-            <Title>Welcome Back!</Title>
-            <Paragraph>
-              To keep connected with us please login with your personal info
-            </Paragraph>
-            <GhostButton onClick={() => toggle(true)}>
-              LOG IN
-            </GhostButton>
-          </LeftOverlayPanel>
 
-          <RightOverlayPanel signinIn={signIn}>
-            <Title>Hello, Friend!</Title>
-            <Paragraph>
-              Enter your personal details and start your journey with us
-            </Paragraph>
-            <GhostButton onClick={() => toggle(false)}>
-              Sign Up
-            </GhostButton>
-          </RightOverlayPanel>
-        </Overlay>
-      </OverlayContainer>
-    </Container>
-  );
-};
           <RightOverlayPanel signinIn={signIn}>
             <Title>Hello, Friend!</Title>
             <Paragraph>
