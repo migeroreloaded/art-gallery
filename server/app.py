@@ -3,9 +3,11 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from models import User, Artist, Artwork, Exhibition, ArtworkExhibition, Favorite
 from config import create_app, db
 from flask_bcrypt import Bcrypt
+from flask_cors import CORS
 
 # Create app instance
 app = create_app('development')
+CORS(app)
 
 # Initialize Flask-Bcrypt
 bcrypt = Bcrypt(app)
@@ -30,8 +32,14 @@ def signup():
     if len(data['password']) < 10:
         return jsonify({'message': 'Password must be at least 10 characters long'}), 400
     
+    # Ensure role is either "Artist" or "Art Enthusiast"
+    role = data.get('role', '').lower()  # Convert role to lowercase for case insensitivity
+    
+    if role not in ['artist', 'art enthusiast']:
+        return jsonify({'message': 'Role must be either "Artist" or "Art Enthusiast"'}), 400
+    
     hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
-    user = User(username=data['username'], email=data['email'], password=hashed_password, role='artist')
+    user = User(username=data['username'], email=data['email'], password=hashed_password, role=role)
     
     db.session.add(user)
     db.session.commit()
@@ -46,7 +54,9 @@ def login():
         login_user(user)
         return jsonify({'message': 'Login successful'})
     else:
-        return jsonify({'message': 'Invalid credentials'}), 401
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
+        return jsonify({'message': 'Invalid password'}), 401
 
 @app.route('/logout', methods=['POST'])
 @login_required
