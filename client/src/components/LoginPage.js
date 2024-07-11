@@ -15,6 +15,7 @@ import {
   GhostButton,
   Paragraph
 } from './styles';
+import { useAuth } from './AuthContext';
 
 const LoginPage = ({ signIn, toggle }) => {
   const [formData, setFormData] = useState({
@@ -76,7 +77,32 @@ const LoginPage = ({ signIn, toggle }) => {
               Sign In
             </GhostButton>
           </LeftOverlayPanel>
+      <OverlayContainer signinIn={signIn}>
+        <Overlay signinIn={signIn}>
+          <LeftOverlayPanel signinIn={signIn}>
+            <Title>Welcome Back!</Title>
+            <Paragraph>
+              To keep connected with us please login with your personal info
+            </Paragraph>
+            <GhostButton onClick={() => toggle(true)}>
+              Sign In
+            </GhostButton>
+          </LeftOverlayPanel>
 
+          <RightOverlayPanel signinIn={signIn}>
+            <Title>Hello, Friend!</Title>
+            <Paragraph>
+              Enter your personal details and start your journey with art
+            </Paragraph>
+            <GhostButton onClick={() => toggle(false)}>
+              Sign Up
+            </GhostButton>
+          </RightOverlayPanel>
+        </Overlay>
+      </OverlayContainer>
+    </Container>
+  );
+};
           <RightOverlayPanel signinIn={signIn}>
             <Title>Hello, Friend!</Title>
             <Paragraph>

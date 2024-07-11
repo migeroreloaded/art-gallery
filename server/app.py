@@ -25,10 +25,10 @@ def index():
     return '<h1>Project Server</h1>'
 
 # User Management
-@app.route('/signup', methods=['POST'])
-def signup():
+@app.route('/register', methods=['POST'])
+def register():
     data = request.get_json()
-    
+
     if len(data['password']) < 10:
         return jsonify({'message': 'Password must be at least 10 characters long'}), 400
     
@@ -43,7 +43,7 @@ def signup():
     
     db.session.add(user)
     db.session.commit()
-    
+
     return jsonify({'message': 'User created successfully'})
 
 @app.route('/login', methods=['POST'])
@@ -52,7 +52,7 @@ def login():
     user = User.query.filter_by(email=data['email']).first()
     if user and bcrypt.check_password_hash(user.password, data['password']):
         login_user(user)
-        return jsonify({'message': 'Login successful'})
+        return jsonify({'message': 'Login successful', 'user': user.to_dict()})
     else:
         if not user:
             return jsonify({'message': 'User not found'}), 404
@@ -63,6 +63,11 @@ def login():
 def logout():
     logout_user()
     return jsonify({'message': 'Logout successful'})
+
+@app.route('/dashboard', methods=['GET'])
+@login_required
+def dashboard():
+    return jsonify({'message': 'Welcome to your dashboard', 'user': current_user.to_dict()})
 
 @app.route('/users', methods=['GET'])
 def get_users():
