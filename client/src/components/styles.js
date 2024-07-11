@@ -312,8 +312,6 @@ export const Footer = styled.footer`
 `;
 
 // Artist styling
-import styled from 'styled-components';
-
 export const ArtistGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* Three columns of equal size */
