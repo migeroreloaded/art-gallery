@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import {
   PageContainer,
   Header,
@@ -10,21 +11,35 @@ import {
   Footer
 } from './styles'; // Ensure this path is correct
 
-const exhibitions = [
-  {
-    title: "Impressionist Masters",
-    description: "An exhibition of works by Monet, Degas, and other Impressionist painters.",
-    imageUrl: "/images/impressionist.jpg"
-  },
-  {
-    title: "Modern Art",
-    description: "Explore the abstract and avant-garde works of the 20th century.",
-    imageUrl: "/images/modern.jpg"
-  },
-  // Add more exhibitions as needed
-];
-
 const ExhibitionsPage = () => {
+  const [exhibitions, setExhibitions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchExhibitions = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:5000/events');
+        setExhibitions(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Error fetching exhibitions. Please try again later.');
+        setLoading(false);
+      }
+    };
+
+    fetchExhibitions();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
     <PageContainer>
       <Header>
@@ -35,9 +50,11 @@ const ExhibitionsPage = () => {
         <h2>Current Highlights</h2>
         {exhibitions.slice(0, 2).map((exhibition, index) => (
           <ExhibitionCard key={index}>
-            <img src={exhibition.imageUrl} alt={exhibition.title} />
-            <ExhibitionTitle>{exhibition.title}</ExhibitionTitle>
+            {/* Assuming you want to display the name of the exhibition */}
+            <ExhibitionTitle>{exhibition.name}</ExhibitionTitle>
             <ExhibitionDescription>{exhibition.description}</ExhibitionDescription>
+            <p>Start Date: {exhibition.start_date}</p>
+            <p>End Date: {exhibition.end_date}</p>
           </ExhibitionCard>
         ))}
       </ExhibitionHighlights>
@@ -45,9 +62,10 @@ const ExhibitionsPage = () => {
       <ExhibitionList>
         {exhibitions.map((exhibition, index) => (
           <ExhibitionCard key={index}>
-            <img src={exhibition.imageUrl} alt={exhibition.title} />
-            <ExhibitionTitle>{exhibition.title}</ExhibitionTitle>
+            <ExhibitionTitle>{exhibition.name}</ExhibitionTitle>
             <ExhibitionDescription>{exhibition.description}</ExhibitionDescription>
+            <p>Start Date: {exhibition.start_date}</p>
+            <p>End Date: {exhibition.end_date}</p>
           </ExhibitionCard>
         ))}
       </ExhibitionList>
