@@ -48,7 +48,7 @@ const Artist = () => {
                                 <ArtistName>{artist.name}</ArtistName>
                             </Link>
                             <ArtistBio>{artist.bio}</ArtistBio>
-                            <ArtistImage src={artist.image_url} alt={artist.name} />
+                            <ArtistImage src={artist.image} alt={artist.name} />
                         </ArtistContainer>
                     ))}
                 </ArtistGrid>
