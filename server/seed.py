@@ -43,7 +43,8 @@ if __name__ == '__main__':
                 name=fake.name(),
                 biography=fake.text(),
                 birthdate=fake.date_of_birth(minimum_age=20, maximum_age=70),
-                nationality=fake.country()
+                nationality=fake.country(),
+                image=fake.image_url()  # Fake URL for artist image
             )
             artists.append(artist)
         db.session.add_all(artists)
