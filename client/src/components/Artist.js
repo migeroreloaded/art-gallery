@@ -31,3 +31,27 @@ const Artist = () => {
 
         fetchArtists();
     }, []);
+
+    return (
+        <div>
+            <h2>Artists</h2>
+            {loading ? (
+                <ArtistLoading>Loading...</ArtistLoading>
+            ) : error ? (
+                <ErrorMessage>{error}</ErrorMessage>
+            ) : (
+                <ArtistGrid>
+                    {artists.map(artist => (
+                        <ArtistContainer key={artist.id}>
+                            <Link to={`/artists/${artist.id}`}>
+                                <ArtistName>{artist.name}</ArtistName>
+                            </Link>
+                            <ArtistBio>{artist.bio}</ArtistBio>
+                            <ArtistImage src={artist.image_url} alt={artist.name} />
+                        </ArtistContainer>
+                    ))}
+                </ArtistGrid>
+            )}
+        </div>
+    );
+};
