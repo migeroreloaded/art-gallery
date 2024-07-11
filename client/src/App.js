@@ -4,6 +4,7 @@ import RegisterPage from './components/RegisterPage';
 import Navbar from './components/Navbar';
 import Artwork from './components/Artworks';
 import ExhibitionsPage from './components/ExhibitionPage';
+import Artist from './components/Artist';
 function App() {
   const [signIn, toggle] = React.useState(true);
 
@@ -17,6 +18,7 @@ function App() {
       )}
       <Artwork />
       <ExhibitionsPage />
+      <Artist />
     </>
   );
 }
