@@ -34,7 +34,7 @@ const RegisterPage = ({ signIn, toggle }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5555/signup', formData);
+      const response = await axios.post('http://localhost:5555/register', formData);
       console.log(response.data);
       // Redirect or show success message here
     } catch (err) {
