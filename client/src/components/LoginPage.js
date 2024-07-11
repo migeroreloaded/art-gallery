@@ -35,6 +35,13 @@ const LoginPage = ({ signIn, toggle }) => {
       const response = await axios.post('http://localhost:5555/login', formData);
       console.log(response.data);
       // Handle successful login (e.g., store token, redirect)
+      // Handle successful login
+      if (response.data.success) { // Assuming response has a success property
+        // Update login state in App.js (using prop)
+        toggle(false);
+      } else {
+        setError(response.data.message || 'Login failed');
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid credentials');
     }
