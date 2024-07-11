@@ -22,11 +22,11 @@ def load_user(user_id):
 def index():
     return '<h1>Project Server</h1>'
 
+# User Management
 @app.route('/signup', methods=['POST'])
 def signup():
     data = request.get_json()
     
-    # Validate password length
     if len(data['password']) < 10:
         return jsonify({'message': 'Password must be at least 10 characters long'}), 400
     
@@ -53,6 +53,36 @@ def login():
 def logout():
     logout_user()
     return jsonify({'message': 'Logout successful'})
+
+@app.route('/users', methods=['GET'])
+def get_users():
+    users = User.query.all()
+    return jsonify([user.to_dict() for user in users])
+
+@app.route('/users/<int:id>', methods=['GET'])
+def get_user(id):
+    user = User.query.get_or_404(id)
+    return jsonify(user.to_dict())
+
+@app.route('/users/<int:id>', methods=['PUT'])
+@login_required
+def update_user(id):
+    user = User.query.get_or_404(id)
+    data = request.get_json()
+    user.username = data['username']
+    user.email = data['email']
+    if 'password' in data:
+        user.password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+    db.session.commit()
+    return jsonify({'message': 'User updated successfully'})
+
+@app.route('/users/<int:id>', methods=['DELETE'])
+@login_required
+def delete_user(id):
+    user = User.query.get_or_404(id)
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({'message': 'User deleted successfully'})
 
 # Artwork Management
 @app.route('/artworks', methods=['POST'])
