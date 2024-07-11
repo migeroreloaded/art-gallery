@@ -27,6 +27,7 @@ class Artist(db.Model, SerializerMixin):
     biography = db.Column(db.Text, nullable=True)
     birthdate = db.Column(db.Date, nullable=False)
     nationality = db.Column(db.String(50), nullable=False)
+    image = db.Column(db.String(255))  # Adjust the length as per your needs
 
     artworks = db.relationship('Artwork', backref='artist', lazy=True)
 
@@ -37,6 +38,7 @@ class Artist(db.Model, SerializerMixin):
             'biography': self.biography,
             'birthdate': self.birthdate.isoformat(),
             'nationality': self.nationality,
+            'image': self.image  # Include image serialization
         }
 
 class Artwork(db.Model, SerializerMixin):

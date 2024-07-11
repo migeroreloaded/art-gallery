@@ -310,3 +310,43 @@ export const Footer = styled.footer`
   color: #fff;
   margin-top: 20px;
 `;
+
+// Artist styling
+export const ArtistGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Three columns of equal size */
+  grid-gap: 20px; /* Spacing between artists */
+`;
+
+export const ArtistContainer = styled.div`
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+export const ArtistName = styled.h3`
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+`;
+
+export const ArtistBio = styled.p`
+  font-size: 1rem;
+  color: #555;
+`;
+
+export const ArtistImage = styled.img`
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+`;
+
+export const ArtistLoading = styled.p`
+  font-style: italic;
+  color: #888;
+`;
+
+export const ErrorMessage = styled.p`
+  color: red;
+`;
