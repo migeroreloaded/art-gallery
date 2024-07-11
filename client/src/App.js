@@ -18,12 +18,11 @@ function App() {
       <Router>
         <Navbar />
         <Switch>
-          <Route path="/login">
+          {signIn ? (
             <LoginPage signIn={signIn} toggle={toggle} />
-          </Route>
-          <Route path="/register">
+          ) : (
             <RegisterPage signIn={signIn} toggle={toggle} />
-          </Route>
+          )}
           <PrivateRoute path="/dashboard" component={Dashboard} />
           <Route path="/artworks" component={Artwork} />
           <Route path="/exhibitions" component={ExhibitionsPage} />
