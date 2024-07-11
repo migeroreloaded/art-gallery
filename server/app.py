@@ -156,6 +156,51 @@ def delete_event(id):
     db.session.commit()
     return jsonify({'message': 'Event deleted successfully'})
 
+# Artist Management
+@app.route('/artists', methods=['POST'])
+@login_required
+def create_artist():
+    data = request.get_json()
+    artist = Artist(
+        name=data['name'],
+        biography=data['biography'],
+        birthdate=data['birthdate'],
+        nationality=data['nationality']
+    )
+    db.session.add(artist)
+    db.session.commit()
+    return jsonify({'message': 'Artist created successfully'})
+
+@app.route('/artists', methods=['GET'])
+def get_artists():
+    artists = Artist.query.all()
+    return jsonify([artist.to_dict() for artist in artists])
+
+@app.route('/artists/<int:id>', methods=['GET'])
+def get_artist(id):
+    artist = Artist.query.get_or_404(id)
+    return jsonify(artist.to_dict())
+
+@app.route('/artists/<int:id>', methods=['PUT'])
+@login_required
+def update_artist(id):
+    artist = Artist.query.get_or_404(id)
+    data = request.get_json()
+    artist.name = data['name']
+    artist.biography = data['biography']
+    artist.birthdate = data['birthdate']
+    artist.nationality = data['nationality']
+    db.session.commit()
+    return jsonify({'message': 'Artist updated successfully'})
+
+@app.route('/artists/<int:id>', methods=['DELETE'])
+@login_required
+def delete_artist(id):
+    artist = Artist.query.get_or_404(id)
+    db.session.delete(artist)
+    db.session.commit()
+    return jsonify({'message': 'Artist deleted successfully'})
+
 # Error Handlers
 @app.errorhandler(404)
 def not_found_error(error):

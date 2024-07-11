@@ -49,13 +49,22 @@ if __name__ == '__main__':
         db.session.add_all(artists)
         db.session.commit()
 
+        # Define lists of relevant artwork data
+        artwork_titles = [
+            "Starry Night", "Mona Lisa", "The Scream", "The Persistence of Memory", 
+            "Girl with a Pearl Earring", "The Night Watch", "The Birth of Venus", 
+            "The Last Supper", "The Kiss", "Guernica"
+        ]
+        artwork_mediums = ["Oil on canvas", "Watercolor", "Acrylic", "Digital"]
+        artwork_styles = ["Abstract", "Realism", "Impressionism", "Surrealism"]
+
         # Create sample artworks
         artworks = []
         for _ in range(20):
             artwork = Artwork(
-                title=fake.word(),
-                medium=rc(['Oil on canvas', 'Watercolor', 'Acrylic', 'Digital']),
-                style=rc(['Abstract', 'Realism', 'Impressionism', 'Surrealism']),
+                title=rc(artwork_titles),
+                medium=rc(artwork_mediums),
+                style=rc(artwork_styles),
                 price=round(fake.pydecimal(left_digits=3, right_digits=2, positive=True), 2),
                 available=rc([True, False]),
                 artist_id=rc([artist.id for artist in artists]),
