@@ -9,6 +9,7 @@ import Artist from './components/Artist';
 import { AuthProvider } from './components/AuthContext'; // Make sure to import AuthProvider
 import PrivateRoute from './components/PrivateRoute';
 import Dashboard from './components/Dashboard';
+import UserDashboard from './components/UserDashboard';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/register" component={RegisterPage} />
           {/* Routes that require authentication */}
           <PrivateRoute path="/dashboard" component={Dashboard} />
+          <PrivateRoute path="/user-dashboard" component={UserDashboard} />
           {/* Public routes */}
           <Route path="/artworks" component={Artwork} />
           <Route path="/exhibitions" component={ExhibitionsPage} />
