@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-
+import Navbar from './Navbar';
 import {
     ArtistGrid,
     ArtistContainer,
@@ -35,6 +35,7 @@ const Artist = () => {
 
     return (
         <div>
+            <Navbar />
             <h2>Artists</h2>
             {loading ? (
                 <ArtistLoading>Loading...</ArtistLoading>

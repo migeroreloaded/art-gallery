@@ -39,9 +39,11 @@ const LoginPage = () => {
       if (response.data.message === 'Login successful') {
         login(response.data.token); // Assuming login function sets authentication token
         if (response.data.role === 'artist') {
-          history.push('/dashboard'); // Redirect to dashboard route
+          history.push('/mangement'); // Redirect to artworks route for artist
+        } else if (response.data.role === 'user') {
+          history.push('/user-artworks'); // Redirect to artworks route for user
         } else {
-          history.push('/user-dashboard'); // Redirect to user dashboard route
+          history.push('/dashboard'); // Redirect to dashboard for other roles
         }
       } else {
         setError(response.data.message || 'Login failed');

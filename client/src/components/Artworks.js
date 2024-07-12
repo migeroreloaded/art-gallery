@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Navbar from './Navbar';
 import {
     ArtworkGrid,
     ArtworkContainer,
@@ -34,6 +35,7 @@ const Artwork = () => {
 
   return (
     <div>
+      <Navbar />
       <h2>Artworks</h2>
       {loading ? (
         <ArtworkLoading>Loading...</ArtworkLoading>

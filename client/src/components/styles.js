@@ -274,9 +274,7 @@ export const PageContainer = styled.div`
   background-color: #f5f5f5;
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
   border-radius: 10px;
-  width: 70%
-  position: center;
-  
+
 `;
 
 export const Header = styled.header`
@@ -377,33 +375,3 @@ export const ArtistLoading = styled.p`
 export const ErrorMessage = styled.p`
   color: red;
 `;
-export const FormField = styled.div`
-  margin-bottom: 20px;
-  display: flex;
-  flex-direction: column;
-`;
-
-export const Label = styled.label`
-  font-size: 1rem;
-  margin-bottom: 5px;
-`;
-
-export const InputField = styled.input`
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-`;
-
-// export const Wrapper = styled.div`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   flex-direction: column;
-//   padding: 20px;
-//   background-color: #f5f5f5;
-//   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-//   border-radius: 10px;
-//   width: 70%;
-//   margin: 0 auto; /* Centering the wrapper horizontally */
-// `;
