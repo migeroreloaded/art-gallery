@@ -20,7 +20,7 @@ const Artist = () => {
     useEffect(() => {
         const fetchArtists = async () => {
             try {
-                const response = await axios.get('http://127.0.0.1:5000/artists');
+                const response = await axios.get('http://127.0.0.1:5555/artists');
                 setArtists(response.data);
                 setLoading(false);
             } catch (error) {
