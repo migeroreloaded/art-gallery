@@ -23,12 +23,6 @@ const Navbar = () => {
                     <li className="nav-item">
                         <Link to="/exhibitions" className="nav-link">Exhibition</Link>
                     </li>
-                    <li className="nav-item">
-                        <input type="text" placeholder="Search..." className="nav-search" />
-                    </li>
-                    <li className="nav-item">
-                        <Link to="/login" className="nav-link">Login</Link>
-                    </li>
                 </ul>
             </NavbarRight>
         </NavbarContainer>

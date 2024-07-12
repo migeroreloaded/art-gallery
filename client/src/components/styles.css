@@ -1,0 +1,56 @@
+/* src/components/styles.css */
+
+body, html, #root {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.welcome-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background: url('../image/europeana-5TK1F5VfdIk-unsplash.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: white;
+  text-align: center;
+}
+
+.welcome-content {
+  background: rgba(0, 0, 0, 0.6);
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+  margin-bottom: 30px;
+  font-size: 3rem;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.welcome-button {
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.welcome-button:hover {
+  background-color: #0056b3;
+  transform: translateY(-3px);
+}
+
+.welcome-button:active {
+  background-color: #004494;
+}

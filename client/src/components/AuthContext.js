@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
       try {
         const token = localStorage.getItem('authToken');
         if (token) {
-          const response = await axios.get('http://127.0.0.1:5555/user', {
+          const response = await axios.get('http://127.0.0.1:5555/users', {
             headers: { Authorization: `Bearer ${token}` }
           });
           setUser(response.data.user);
@@ -34,6 +34,7 @@ export const AuthProvider = ({ children }) => {
       throw new Error(error.response?.data?.message || 'Login failed');
     }
   };
+  
 
   const register = async (username, email, password) => {
     try {

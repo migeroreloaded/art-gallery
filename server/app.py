@@ -50,13 +50,13 @@ def register():
 def login():
     data = request.get_json()
     user = User.query.filter_by(email=data['email']).first()
+
     if user and bcrypt.check_password_hash(user.password, data['password']):
         login_user(user)
         return jsonify({'message': 'Login successful', 'user': user.to_dict(), 'role': user.role})
     else:
-        if not user:
-            return jsonify({'message': 'User not found'}), 404
-        return jsonify({'message': 'Invalid password'}), 401
+        return jsonify({'message': 'Invalid email or password'}), 401
+
 
 @app.route('/logout', methods=['POST'])
 @login_required
@@ -210,7 +210,8 @@ def create_artist():
         name=data['name'],
         biography=data['biography'],
         birthdate=data['birthdate'],
-        nationality=data['nationality']
+        nationality=data['nationality'],
+        user_id=current_user.id
     )
     db.session.add(artist)
     db.session.commit()
@@ -230,6 +231,8 @@ def get_artist(id):
 @login_required
 def update_artist(id):
     artist = Artist.query.get_or_404(id)
+    if artist.user_id != current_user.id:
+        return jsonify({'message': 'Unauthorized'}), 403
     data = request.get_json()
     artist.name = data['name']
     artist.biography = data['biography']
@@ -242,6 +245,8 @@ def update_artist(id):
 @login_required
 def delete_artist(id):
     artist = Artist.query.get_or_404(id)
+    if artist.user_id != current_user.id:
+        return jsonify({'message': 'Unauthorized'}), 403
     db.session.delete(artist)
     db.session.commit()
     return jsonify({'message': 'Artist deleted successfully'})
