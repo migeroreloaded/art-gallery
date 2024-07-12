@@ -1,33 +1,30 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import Navbar from './components/Navbar';
 import Artwork from './components/Artworks';
 import ExhibitionsPage from './components/ExhibitionPage';
 import Artist from './components/Artist';
-import { AuthProvider } from './components/AuthContext';
+import { AuthProvider } from './components/AuthContext'; // Make sure to import AuthProvider
 import PrivateRoute from './components/PrivateRoute';
 import Dashboard from './components/Dashboard';
 
 function App() {
-  const [signIn, toggle] = React.useState(true);
-
   return (
     <AuthProvider>
       <Router>
         <Navbar />
         <Switch>
-          {signIn ? (
-            <LoginPage signIn={signIn} toggle={toggle} />
-          ) : (
-            <RegisterPage signIn={signIn} toggle={toggle} />
-          )}
+          <Route path="/login" component={LoginPage} />
+          <Route path="/register" component={RegisterPage} />
+          {/* Routes that require authentication */}
           <PrivateRoute path="/dashboard" component={Dashboard} />
+          {/* Public routes */}
           <Route path="/artworks" component={Artwork} />
           <Route path="/exhibitions" component={ExhibitionsPage} />
           <Route path="/artists" component={Artist} />
-          {/* Add more routes as needed */}
+          <Redirect to="/artworks" />
         </Switch>
       </Router>
     </AuthProvider>
