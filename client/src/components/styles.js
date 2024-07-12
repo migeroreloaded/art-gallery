@@ -343,6 +343,7 @@ export const ArtistGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* Three columns of equal size */
   grid-gap: 20px; /* Spacing between artists */
+  position: absolute;
 `;
 
 export const ArtistContainer = styled.div`
