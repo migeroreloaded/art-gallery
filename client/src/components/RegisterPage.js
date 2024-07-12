@@ -15,10 +15,10 @@ import {
   Paragraph,
   Select
 } from './styles';
-// Remove unused import
-// import { useAuth } from './AuthContext';
+import { useAuth } from './AuthContext';
 
-const RegisterPage = ({ signIn, toggle }) => {
+const RegisterPage = () => {
+  const { register } = useAuth(); // Assuming register function is available from AuthContext
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -36,7 +36,11 @@ const RegisterPage = ({ signIn, toggle }) => {
     try {
       const response = await axios.post('http://localhost:5555/register', formData);
       console.log(response.data);
-      // Redirect or show success message here
+      if (response.data.success) {
+        register(response.data.token); // Assuming register function sets authentication token
+      } else {
+        setError(response.data.message || 'Registration failed');
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'An error occurred during sign up');
     }
@@ -44,29 +48,29 @@ const RegisterPage = ({ signIn, toggle }) => {
 
   return (
     <Container>
-      <SignUpContainer signinIn={signIn}>
+      <SignUpContainer>
         <Form onSubmit={handleSubmit}>
           <Title>Create Account</Title>
           {error && <p style={{ color: 'red' }}>{error}</p>}
-          <Input 
-            type='text' 
-            placeholder='Username' 
+          <Input
+            type='text'
+            placeholder='Username'
             name='username'
             value={formData.username}
             onChange={handleChange}
             required
           />
-          <Input 
-            type='email' 
-            placeholder='Email' 
+          <Input
+            type='email'
+            placeholder='Email'
             name='email'
             value={formData.email}
             onChange={handleChange}
             required
           />
-          <Input 
-            type='password' 
-            placeholder='Password' 
+          <Input
+            type='password'
+            placeholder='Password'
             name='password'
             value={formData.password}
             onChange={handleChange}
@@ -86,25 +90,25 @@ const RegisterPage = ({ signIn, toggle }) => {
         </Form>
       </SignUpContainer>
 
-      <OverlayContainer signinIn={signIn}>
-        <Overlay signinIn={signIn}>
-          <LeftOverlayPanel signinIn={signIn}>
+      <OverlayContainer>
+        <Overlay>
+          <LeftOverlayPanel>
             <Title>Welcome Back!</Title>
             <Paragraph>
               To keep connected with us please login with your personal info
             </Paragraph>
-            <GhostButton onClick={() => toggle(true)}>
+            <GhostButton to="/login">
               LOG IN
             </GhostButton>
           </LeftOverlayPanel>
 
-          <RightOverlayPanel signinIn={signIn}>
+          <RightOverlayPanel>
             <Title>Hello, Friend!</Title>
             <Paragraph>
               Enter your personal details and start your journey with us
             </Paragraph>
-            <GhostButton onClick={() => toggle(false)}>
-              Sign Up
+            <GhostButton to="/login">
+              LOG IN
             </GhostButton>
           </RightOverlayPanel>
         </Overlay>
