@@ -16,6 +16,7 @@ import {
   Paragraph
 } from './styles';
 import { useAuth } from './AuthContext';
+import { Link, useHistory } from 'react-router-dom';
 
 const LoginPage = () => {
   const { login } = useAuth(); // Assuming login function is available from AuthContext
@@ -24,6 +25,7 @@ const LoginPage = () => {
     password: ''
   });
   const [error, setError] = useState('');
+  const history = useHistory();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,8 +36,13 @@ const LoginPage = () => {
     try {
       const response = await axios.post('http://localhost:5555/login', formData);
       console.log(response.data);
-      if (response.data.success) {
+      if (response.data.message === 'Login successful') {
         login(response.data.token); // Assuming login function sets authentication token
+        if (response.data.role === 'artist') {
+          history.push('/dashboard'); // Redirect to dashboard route
+        } else {
+          history.push('/user-dashboard'); // Redirect to user dashboard route
+        }
       } else {
         setError(response.data.message || 'Login failed');
       }
@@ -76,9 +83,9 @@ const LoginPage = () => {
           <LeftOverlayPanel>
             <Title>Welcome Back!</Title>
             <Paragraph>
-              To keep connected with us please login with your personal info
+              Create an account and start your journey with art
             </Paragraph>
-            <GhostButton to="/register">
+            <GhostButton as={Link} to="/register">
               Sign Up
             </GhostButton>
           </LeftOverlayPanel>
@@ -88,7 +95,7 @@ const LoginPage = () => {
             <Paragraph>
               Enter your personal details and start your journey with art
             </Paragraph>
-            <GhostButton to="/register">
+            <GhostButton as={Link} to="/register">
               Sign Up
             </GhostButton>
           </RightOverlayPanel>
