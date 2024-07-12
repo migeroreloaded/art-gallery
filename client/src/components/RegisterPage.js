@@ -16,6 +16,7 @@ import {
   Select
 } from './styles';
 import { useAuth } from './AuthContext';
+import { Link } from 'react-router-dom';
 
 const RegisterPage = () => {
   const { register } = useAuth(); // Assuming register function is available from AuthContext
@@ -93,11 +94,11 @@ const RegisterPage = () => {
       <OverlayContainer>
         <Overlay>
           <LeftOverlayPanel>
-            <Title>Welcome Back!</Title>
+            <Title>Hello Friend!!</Title>
             <Paragraph>
-              To keep connected with us please login with your personal info
+             To keep connected with us please login
             </Paragraph>
-            <GhostButton to="/login">
+            <GhostButton as={Link} to="/login">
               LOG IN
             </GhostButton>
           </LeftOverlayPanel>
@@ -107,7 +108,7 @@ const RegisterPage = () => {
             <Paragraph>
               Enter your personal details and start your journey with us
             </Paragraph>
-            <GhostButton to="/login">
+            <GhostButton as={Link} to="/login">
               LOG IN
             </GhostButton>
           </RightOverlayPanel>
