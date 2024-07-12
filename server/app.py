@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect, url_for
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from models import User, Artist, Artwork, Exhibition, ArtworkExhibition, Favorite
 from config import create_app, db
@@ -52,7 +52,7 @@ def login():
     user = User.query.filter_by(email=data['email']).first()
     if user and bcrypt.check_password_hash(user.password, data['password']):
         login_user(user)
-        return jsonify({'message': 'Login successful', 'user': user.to_dict()})
+        return jsonify({'message': 'Login successful', 'user': user.to_dict(), 'role': user.role})
     else:
         if not user:
             return jsonify({'message': 'User not found'}), 404
