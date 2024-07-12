@@ -3,7 +3,6 @@ import axios from 'axios';
 import {
   PageContainer,
   Header,
-  ExhibitionHighlights,
   ExhibitionList,
   ExhibitionCard,
   ExhibitionTitle,
@@ -45,19 +44,6 @@ const ExhibitionsPage = () => {
       <Header>
         <h1>Exhibitions</h1>
       </Header>
-
-      <ExhibitionHighlights>
-        <h2>Current Highlights</h2>
-        {exhibitions.slice(0, 2).map((exhibition, index) => (
-          <ExhibitionCard key={index}>
-            {/* Assuming you want to display the name of the exhibition */}
-            <ExhibitionTitle>{exhibition.name}</ExhibitionTitle>
-            <ExhibitionDescription>{exhibition.description}</ExhibitionDescription>
-            <p>Start Date: {exhibition.start_date}</p>
-            <p>End Date: {exhibition.end_date}</p>
-          </ExhibitionCard>
-        ))}
-      </ExhibitionHighlights>
 
       <ExhibitionList>
         {exhibitions.map((exhibition, index) => (

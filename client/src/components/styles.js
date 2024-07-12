@@ -272,8 +272,8 @@ export const ArtworkLoading = styled.p`
 export const PageContainer = styled.div`
   padding: 20px;
   background-color: #f5f5f5;
-   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
- border-radius: 10px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  border-radius: 10px;
 
 `;
 
@@ -289,8 +289,12 @@ export const Header = styled.header`
 `;
 
 export const ExhibitionHighlights = styled.div`
+margin-top: 20px;
   padding: 20px;
-`;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Four columns of equal size */
+  grid-gap: 20px; /* Spacing between artworks */`;
+  
 
 export const ExhibitionList = styled.div`
   padding: 20px;
