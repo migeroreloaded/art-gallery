@@ -39,11 +39,12 @@ const LoginPage = () => {
       if (response.data.message === 'Login successful') {
         login(response.data.token); // Assuming login function sets authentication token
         if (response.data.role === 'artist') {
-          history.push('/mangement'); // Redirect to artworks route for artist
-        } else if (response.data.role === 'user') {
-          history.push('/user-artworks'); // Redirect to artworks route for user
+          history.push('/management'); // Redirect to management route for artists
+        } else if (response.data.role === 'art enthusiast') {
+          history.push('/artworks'); // Redirect to artworks route for art enthusiasts
         } else {
-          history.push('/dashboard'); // Redirect to dashboard for other roles
+          // Handle other roles or future cases
+          history.push('/dashboard'); // Default redirect for unrecognized roles
         }
       } else {
         setError(response.data.message || 'Login failed');
