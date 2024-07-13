@@ -123,6 +123,22 @@ if __name__ == '__main__':
         db.session.add_all([ArtworkExhibition(artwork_id=ae[0], exhibition_id=ae[1]) for ae in artwork_exhibitions])
         db.session.commit()
 
+                # Create sample favorites with uniqueness check
+        favorites = set()
+        for _ in range(20):
+            while True:
+                user_id = rc([user.id for user in users])
+                artwork_id = rc([artwork.id for artwork in artworks])
+                if (user_id, artwork_id) not in favorites:
+                    favorites.add((user_id, artwork_id))
+                    break
+
+        db.session.add_all([Favorite(user_id=fav[0], artwork_id=fav[1]) for fav in favorites])
+        db.session.commit()
+
+        print('Database seeded successfully.')
+
+
 
 
 
