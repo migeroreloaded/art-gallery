@@ -43,4 +43,19 @@ if __name__ == '__main__':
         db.drop_all()
         db.create_all()
 
+                # Create sample users
+        users = []
+        for _ in range(10):
+            password = fake.password(length=10)
+            user = User(
+                username=fake.user_name(),
+                email=fake.email(),
+                password=bcrypt.generate_password_hash(password).decode('utf-8'),
+                role=rc(['artist', 'collector'])
+            )
+            users.append(user)
+        db.session.add_all(users)
+        db.session.commit()
+
+
 
