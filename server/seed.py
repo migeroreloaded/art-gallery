@@ -110,6 +110,20 @@ if __name__ == '__main__':
         db.session.add_all(exhibitions)
         db.session.commit()
 
+                # Create sample artwork exhibitions with uniqueness check
+        artwork_exhibitions = set()
+        for _ in range(15):  # Adjust the number of relationships as needed
+            while True:
+                artwork_id = rc([artwork.id for artwork in artworks])
+                exhibition_id = rc([exhibition.id for exhibition in exhibitions])
+                if (artwork_id, exhibition_id) not in artwork_exhibitions:
+                    artwork_exhibitions.add((artwork_id, exhibition_id))
+                    break
+        
+        db.session.add_all([ArtworkExhibition(artwork_id=ae[0], exhibition_id=ae[1]) for ae in artwork_exhibitions])
+        db.session.commit()
+
+
 
 
 
