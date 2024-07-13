@@ -71,6 +71,16 @@ if __name__ == '__main__':
         db.session.add_all(artists)
         db.session.commit()
 
+                # Define lists of relevant artwork data
+        artwork_titles = [
+            "Starry Night", "Mona Lisa", "The Scream", "The Persistence of Memory", 
+            "Girl with a Pearl Earring", "The Night Watch", "The Birth of Venus", 
+            "The Last Supper", "The Kiss", "Guernica"
+        ]
+        artwork_mediums = ["Oil on canvas", "Watercolor", "Acrylic", "Digital"]
+        artwork_styles = ["Abstract", "Realism", "Impressionism", "Surrealism"]
+
+
 
 
 
