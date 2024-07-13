@@ -38,3 +38,9 @@ if __name__ == '__main__':
         # Fetch image URLs from Unsplash
         artist_image_urls = get_image_urls(UNSPLASH_ARTISTS_URL)
         artwork_image_urls = get_image_urls(UNSPLASH_ARTWORKS_URL)
+
+                # Drop all tables and create them
+        db.drop_all()
+        db.create_all()
+
+
