@@ -1,12 +1,12 @@
-// src/components/ManagementPage.js
+// ManagementPage.js
 import React from 'react';
 import AddArtwork from './AddArtwork';
-import AddEvent from './AddEvent';
-import DeleteArtist from './DeleteArtist';
-import DeleteArtwork from './DeleteArtwork';
-import DeleteEvent from './DeleteEvent';
-import UpdateArtwork from './UpdateArtwork';
-import UpdateEvent from './UpdateEvent';
+import AddEvent from './AddEvent'
+import DeleteArtist from './DeleteArtist'
+import DeleteArtwork from './DeleteArtwork'
+import DeleteEvent from './DeleteEvent'
+import UpdateArtwork from './UpdateArtwork'
+import UpdateEvent from './UpdateEvent'
 
 const ManagementPage = () => {
   return (
