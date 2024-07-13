@@ -9,7 +9,8 @@ import {
     ArtistBio,
     ArtistImage,
     ArtistLoading,
-    ErrorMessage
+    ErrorMessage,
+    DeleteButton // Add DeleteButton
 } from './styles';
 
 const Artist = () => {
@@ -33,6 +34,16 @@ const Artist = () => {
         fetchArtists();
     }, []);
 
+    const handleDelete = async (id) => {
+        try {
+            await axios.delete(`http://127.0.0.1:5555/artists/${id}`);
+            setArtists(artists.filter(artist => artist.id !== id));
+        } catch (error) {
+            console.error('Error deleting artist:', error);
+            setError('Error deleting artist. Please try again later.');
+        }
+    };
+
     return (
         <div>
             <Navbar />
@@ -50,6 +61,7 @@ const Artist = () => {
                             </Link>
                             <ArtistBio>{artist.bio}</ArtistBio>
                             <ArtistImage src={artist.image} alt={artist.name} />
+                            <DeleteButton onClick={() => handleDelete(artist.id)}>Delete</DeleteButton>
                         </ArtistContainer>
                     ))}
                 </ArtistGrid>

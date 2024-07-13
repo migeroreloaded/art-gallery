@@ -375,3 +375,16 @@ export const ArtistLoading = styled.p`
 export const ErrorMessage = styled.p`
   color: red;
 `;
+export const DeleteButton = styled.button`
+  background-color: #ff69b4; /* Pinkish background */
+  color: white; /* White text */
+  border: none; /* Remove default border */
+  padding: 10px 20px; /* Padding for button */
+  margin-top: 10px; /* Margin on top */
+  cursor: pointer; /* Pointer cursor on hover */
+  border-radius: 5px; /* Rounded corners */
+
+  &:hover {
+    background-color: #ff1493; /* Darker pink on hover */
+  }
+`;

@@ -8,7 +8,8 @@ import {
   ExhibitionCard,
   ExhibitionTitle,
   ExhibitionDescription,
-  Footer
+  Footer,
+  DeleteButton // Add DeleteButton
 } from './styles'; // Ensure this path is correct
 
 const ExhibitionsPage = () => {
@@ -32,6 +33,16 @@ const ExhibitionsPage = () => {
     fetchExhibitions();
   }, []);
 
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://127.0.0.1:5555/events/${id}`);
+      setExhibitions(exhibitions.filter(exhibition => exhibition.id !== id));
+    } catch (error) {
+      console.error('Error deleting exhibition:', error);
+      setError('Error deleting exhibition. Please try again later.');
+    }
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -54,6 +65,7 @@ const ExhibitionsPage = () => {
             <ExhibitionDescription>{exhibition.description}</ExhibitionDescription>
             <p>Start Date: {exhibition.start_date}</p>
             <p>End Date: {exhibition.end_date}</p>
+            <DeleteButton onClick={() => handleDelete(exhibition.id)}>Delete</DeleteButton>
           </ExhibitionCard>
         ))}
       </ExhibitionList>

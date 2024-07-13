@@ -7,11 +7,12 @@ import DeleteArtwork from './DeleteArtwork'
 import DeleteEvent from './DeleteEvent'
 import UpdateArtwork from './UpdateArtwork'
 import UpdateEvent from './UpdateEvent'
-
+import Navbar from './Navbar';
 const ManagementPage = () => {
   return (
     <div>
       <h1>Management Page</h1>
+      <Navbar />
       <AddArtwork />
       <AddEvent />
       <DeleteArtist />

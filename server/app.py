@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, redirect, url_for
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from models import User, Artist, Artwork, Exhibition, ArtworkExhibition, Favorite, db
-from config import create_app
+from models import User, Artist, Artwork, Exhibition, ArtworkExhibition, Favorite
+from config import create_app, db
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 
@@ -32,6 +32,7 @@ def register():
     if len(data['password']) < 10:
         return jsonify({'message': 'Password must be at least 10 characters long'}), 400
     
+    # Ensure role is either "Artist" or "Art Enthusiast"
     role = data.get('role', '').lower()  # Convert role to lowercase for case insensitivity
     
     if role not in ['artist', 'art enthusiast']:
@@ -45,22 +46,12 @@ def register():
 
     return jsonify({'message': 'User created successfully'})
 
-@app.route('/login', methods=['POST', 'OPTIONS'])
+@app.route('/login', methods=['POST'])
 def login():
-    if request.method == 'OPTIONS':
-        return jsonify({'message': 'Preflight request successful'}), 200
-
     data = request.get_json()
-    
-    email = data.get('email')
-    password = data.get('password')
+    user = User.query.filter_by(email=data['email']).first()
 
-    if not email or not password:
-        return jsonify({'message': 'Invalid email or password'}), 401
-
-    user = User.query.filter_by(email=email).first()
-
-    if user and bcrypt.check_password_hash(user.password, password):
+    if user and bcrypt.check_password_hash(user.password, data['password']):
         login_user(user)
         return jsonify({'message': 'Login successful', 'user': user.to_dict(), 'role': user.role})
     else:
@@ -90,18 +81,14 @@ def get_user(id):
 @app.route('/users/<int:id>', methods=['PUT'])
 @login_required
 def update_user(id):
-    try:
-        user = User.query.get_or_404(id)
-        data = request.get_json()
-        user.username = data['username']
-        user.email = data['email']
-        if 'password' in data:
-            user.password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
-        db.session.commit()
-        return jsonify({'message': 'User updated successfully'})
-    except Exception as e:
-        print(f"Error in update_user route: {e}")
-        return jsonify({'message': 'Internal server error'}), 500
+    user = User.query.get_or_404(id)
+    data = request.get_json()
+    user.username = data['username']
+    user.email = data['email']
+    if 'password' in data:
+        user.password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+    db.session.commit()
+    return jsonify({'message': 'User updated successfully'})
 
 @app.route('/users/<int:id>', methods=['DELETE'])
 @login_required
@@ -115,23 +102,18 @@ def delete_user(id):
 @app.route('/artworks', methods=['POST'])
 @login_required
 def create_artwork():
-    try:
-        data = request.get_json()
-        artwork = Artwork(
-            title=data['title'],
-            medium=data['medium'],
-            style=data['style'],
-            price=data['price'],
-            available=data['available'],
-            artist_id=current_user.id,
-            image=data['image']
-        )
-        db.session.add(artwork)
-        db.session.commit()
-        return jsonify({'message': 'Artwork created successfully'})
-    except Exception as e:
-        print(f"Error in create_artwork route: {e}")
-        return jsonify({'message': 'Internal server error'}), 500
+    data = request.get_json()
+    artwork = Artwork(
+        title=data['title'],
+        medium=data['medium'],
+        style=data['style'],
+        price=data['price'],
+        available=data['available'],
+        artist_id=current_user.id
+    )
+    db.session.add(artwork)
+    db.session.commit()
+    return jsonify({'message': 'Artwork created successfully'})
 
 @app.route('/artworks', methods=['GET'])
 def get_artworks():
@@ -228,7 +210,6 @@ def create_artist():
         biography=data['biography'],
         birthdate=data['birthdate'],
         nationality=data['nationality'],
-        image=data['image'],
         user_id=current_user.id
     )
     db.session.add(artist)
@@ -256,23 +237,18 @@ def update_artist(id):
     artist.biography = data['biography']
     artist.birthdate = data['birthdate']
     artist.nationality = data['nationality']
-    artist.image = data['image']
     db.session.commit()
     return jsonify({'message': 'Artist updated successfully'})
 
 @app.route('/artists/<int:id>', methods=['DELETE'])
 @login_required
 def delete_artist(id):
-    try:
-        artist = Artist.query.get_or_404(id)
-        if artist.user_id != current_user.id:
-            return jsonify({'message': 'Unauthorized'}), 403
-        db.session.delete(artist)
-        db.session.commit()
-        return jsonify({'message': 'Artist deleted successfully'})
-    except Exception as e:
-        print(f"Error in delete_artist route: {e}")
-        return jsonify({'message': 'Internal server error'}), 500
+    artist = Artist.query.get_or_404(id)
+    if artist.user_id != current_user.id:
+        return jsonify({'message': 'Unauthorized'}), 403
+    db.session.delete(artist)
+    db.session.commit()
+    return jsonify({'message': 'Artist deleted successfully'})
 
 # Error Handlers
 @app.errorhandler(404)
@@ -281,7 +257,8 @@ def not_found_error(error):
 
 @app.errorhandler(500)
 def internal_error(error):
+    db.session.rollback()
     return jsonify({'message': 'Internal server error'}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=5555, debug=True)
