@@ -96,6 +96,21 @@ if __name__ == '__main__':
         db.session.add_all(artworks)
         db.session.commit()
 
+                # Create sample exhibitions
+        exhibitions = []
+        for _ in range(5):
+            exhibition = Exhibition(
+                name=fake.catch_phrase(),
+                start_date=fake.date_this_year(),
+                end_date=fake.date_this_year(),
+                description=fake.text(),
+                artist_id=rc([artist.id for artist in artists])  # Ensure artist_id is included
+            )
+            exhibitions.append(exhibition)
+        db.session.add_all(exhibitions)
+        db.session.commit()
+
+
 
 
 
