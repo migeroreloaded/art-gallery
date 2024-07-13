@@ -39,11 +39,11 @@ if __name__ == '__main__':
         artist_image_urls = get_image_urls(UNSPLASH_ARTISTS_URL)
         artwork_image_urls = get_image_urls(UNSPLASH_ARTWORKS_URL)
 
-                # Drop all tables and create them
+        # Drop all tables and create them
         db.drop_all()
         db.create_all()
 
-                # Create sample users
+        # Create sample users
         users = []
         for _ in range(10):
             password = fake.password(length=10)
@@ -57,7 +57,7 @@ if __name__ == '__main__':
         db.session.add_all(users)
         db.session.commit()
 
-                # Create sample artists
+        # Create sample artists
         artists = []
         for _ in range(5):
             artist = Artist(
@@ -71,7 +71,7 @@ if __name__ == '__main__':
         db.session.add_all(artists)
         db.session.commit()
 
-                # Define lists of relevant artwork data
+        # Define lists of relevant artwork data
         artwork_titles = [
             "Starry Night", "Mona Lisa", "The Scream", "The Persistence of Memory", 
             "Girl with a Pearl Earring", "The Night Watch", "The Birth of Venus", 
@@ -80,7 +80,7 @@ if __name__ == '__main__':
         artwork_mediums = ["Oil on canvas", "Watercolor", "Acrylic", "Digital"]
         artwork_styles = ["Abstract", "Realism", "Impressionism", "Surrealism"]
 
-                # Create sample artworks
+        # Create sample artworks
         artworks = []
         for _ in range(20):
             artwork = Artwork(
@@ -96,7 +96,7 @@ if __name__ == '__main__':
         db.session.add_all(artworks)
         db.session.commit()
 
-                # Create sample exhibitions
+        # Create sample exhibitions
         exhibitions = []
         for _ in range(5):
             exhibition = Exhibition(
@@ -110,7 +110,7 @@ if __name__ == '__main__':
         db.session.add_all(exhibitions)
         db.session.commit()
 
-                # Create sample artwork exhibitions with uniqueness check
+        # Create sample artwork exhibitions with uniqueness check
         artwork_exhibitions = set()
         for _ in range(15):  # Adjust the number of relationships as needed
             while True:
@@ -123,7 +123,7 @@ if __name__ == '__main__':
         db.session.add_all([ArtworkExhibition(artwork_id=ae[0], exhibition_id=ae[1]) for ae in artwork_exhibitions])
         db.session.commit()
 
-                # Create sample favorites with uniqueness check
+        # Create sample favorites with uniqueness check
         favorites = set()
         for _ in range(20):
             while True:
@@ -137,11 +137,3 @@ if __name__ == '__main__':
         db.session.commit()
 
         print('Database seeded successfully.')
-
-
-
-
-
-
-
-
