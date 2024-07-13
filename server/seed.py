@@ -57,5 +57,20 @@ if __name__ == '__main__':
         db.session.add_all(users)
         db.session.commit()
 
+                # Create sample artists
+        artists = []
+        for _ in range(5):
+            artist = Artist(
+                name=fake.name(),
+                biography=fake.text(),
+                birthdate=fake.date_of_birth(minimum_age=20, maximum_age=70),
+                nationality=fake.country(),
+                image=get_random_image_url(artist_image_urls)  # Fetch URL for artist image
+            )
+            artists.append(artist)
+        db.session.add_all(artists)
+        db.session.commit()
+
+
 
 
