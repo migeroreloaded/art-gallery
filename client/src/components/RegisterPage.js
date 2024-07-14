@@ -21,7 +21,6 @@ import { Link } from 'react-router-dom';
 const RegisterPage = () => {
   const { register } = useAuth(); // Assuming register function is available from AuthContext
   const [formData, setFormData] = useState({
-    username: '',
     email: '',
     password: '',
     role: 'artist' // Default value
@@ -66,12 +65,12 @@ const RegisterPage = () => {
           </Select><br /><br />
           {formData.role === '' && (
             <>
-            <p>Please select a role before proceeding.</p>
+              <p>Please select a role before proceeding.</p>
             </>
           )}
           {formData.role === 'art enthusiast' && (
             <>
-            <Input
+              <Input
                 type='text'
                 placeholder='Username'
                 name='username'
@@ -97,16 +96,8 @@ const RegisterPage = () => {
               />
             </>
           )}
-          {formData.role === 'artist' &&(
+          {formData.role === 'artist' && (
             <>
-            <Input
-                type='text'
-                placeholder='Username'
-                name='username'
-                value={formData.username}
-                onChange={handleChange}
-                required
-              />
               <Input
                 type='email'
                 placeholder='Email'
@@ -175,7 +166,7 @@ const RegisterPage = () => {
           <LeftOverlayPanel>
             <Title>Hello Friend!!</Title>
             <Paragraph>
-             To keep connected with us please login
+              To keep connected with us please login
             </Paragraph>
             <GhostButton as={Link} to="/login">
               LOG IN

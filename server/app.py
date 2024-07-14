@@ -57,13 +57,14 @@ def register():
         db.session.add(artist)
         db.session.commit()
 
-        user = User(username=data['username'], email=data['email'], password=hashed_password, role=role, artist=artist)
+        user = User(email=data['email'], password=hashed_password, role=role)
+        db.session.add(user)
+        db.session.commit()
     else:
         # Handle registration as an art enthusiast
-        user = User(username=data['username'], email=data['email'], password=hashed_password, role=role)
-
-    db.session.add(user)
-    db.session.commit()
+        user = User(email=data['email'], password=hashed_password, role=role)
+        db.session.add(user)
+        db.session.commit()
 
     return jsonify({'message': 'User created successfully'})
 
