@@ -37,7 +37,7 @@ const RegisterPage = () => {
     try {
       const response = await axios.post('http://localhost:5555/register', formData);
       console.log(response.data);
-      if (response.data.success) {
+      if (response.data.message === 'User created successfully') {
         register(response.data.token); // Assuming register function sets authentication token
       } else {
         setError(response.data.message || 'Registration failed');
@@ -53,30 +53,6 @@ const RegisterPage = () => {
         <Form onSubmit={handleSubmit}>
           <Title>Create Account</Title>
           {error && <p style={{ color: 'red' }}>{error}</p>}
-          <Input
-            type='text'
-            placeholder='Username'
-            name='username'
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
-          <Input
-            type='email'
-            placeholder='Email'
-            name='email'
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-          <Input
-            type='password'
-            placeholder='Password'
-            name='password'
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
           <label htmlFor="role">Role:</label><br />
           <Select
             id="role"
@@ -84,9 +60,112 @@ const RegisterPage = () => {
             value={formData.role}
             onChange={handleChange}
           >
+            <option value="">Choose role</option>
             <option value="artist">Artist</option>
             <option value="art enthusiast">Art Enthusiast</option>
           </Select><br /><br />
+          {formData.role === '' && (
+            <>
+            <p>Please select a role before proceeding.</p>
+            </>
+          )}
+          {formData.role === 'art enthusiast' && (
+            <>
+            <Input
+                type='text'
+                placeholder='Username'
+                name='username'
+                value={formData.username}
+                onChange={handleChange}
+                required
+              />
+              <Input
+                type='email'
+                placeholder='Email'
+                name='email'
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+              <Input
+                type='password'
+                placeholder='Password'
+                name='password'
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+            </>
+          )}
+          {formData.role === 'artist' &&(
+            <>
+            <Input
+                type='text'
+                placeholder='Username'
+                name='username'
+                value={formData.username}
+                onChange={handleChange}
+                required
+              />
+              <Input
+                type='email'
+                placeholder='Email'
+                name='email'
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+              <Input
+                type='password'
+                placeholder='Password'
+                name='password'
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+              <Input
+                type='text'
+                placeholder='Name'
+                name='name'
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
+              <Input
+                type='text'
+                placeholder='Biography'
+                name='biography'
+                value={formData.biography}
+                onChange={handleChange}
+                required
+              />
+              <Input
+                type='date'
+                placeholder='Birthdate'
+                name='birthdate'
+                value={formData.birthdate}
+                onChange={handleChange}
+                required
+              />
+              <Input
+                type='text'
+                placeholder='Nationality'
+                name='nationality'
+                value={formData.nationality}
+                onChange={handleChange}
+                required
+              />
+              <Input
+                type='text'
+                placeholder='Image URL'
+                name='image'
+                value={formData.image}
+                onChange={handleChange}
+                required
+              />
+              {/* Add other artist-specific fields */}
+            </>
+          )}
           <Button type="submit">Sign Up</Button>
         </Form>
       </SignUpContainer>
