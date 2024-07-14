@@ -10,6 +10,7 @@ class User(db.Model, UserMixin, SerializerMixin):
     password = db.Column(db.String(120), nullable=False)
     role = db.Column(db.String(50), nullable=False)
 
+    artist = db.relationship('Artist', backref='user', uselist=False)
     favorites = db.relationship('Favorite', backref='user', lazy=True)
 
     def to_dict(self):
@@ -17,6 +18,7 @@ class User(db.Model, UserMixin, SerializerMixin):
             'id': self.id,
             'email': self.email,
             'role': self.role,
+            'artist': self.artist.to_dict() if self.artist else None
         }
 
 class Artist(db.Model, SerializerMixin):
@@ -26,7 +28,8 @@ class Artist(db.Model, SerializerMixin):
     biography = db.Column(db.Text, nullable=True)
     birthdate = db.Column(db.Date, nullable=False)
     nationality = db.Column(db.String(50), nullable=False)
-    image = db.Column(db.String(255))  # Adjust the length as per your needs
+    image = db.Column(db.String(255))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     artworks = db.relationship('Artwork', backref='artist', lazy=True)
 
@@ -37,9 +40,10 @@ class Artist(db.Model, SerializerMixin):
             'biography': self.biography,
             'birthdate': self.birthdate.isoformat(),
             'nationality': self.nationality,
-            'image': self.image  # Include image serialization if needed
+            'image': self.image,
+            'user_id': self.user_id
         }
-    
+
 class Artwork(db.Model, SerializerMixin):
     __tablename__ = 'artworks'
     id = db.Column(db.Integer, primary_key=True)
@@ -49,7 +53,7 @@ class Artwork(db.Model, SerializerMixin):
     price = db.Column(db.Numeric(10, 2), nullable=False)
     available = db.Column(db.Boolean, default=True, nullable=False)
     artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'), nullable=False)
-    image = db.Column(db.String(255))  # Adjust the length as per your needs
+    image = db.Column(db.String(255))
 
     exhibitions = db.relationship('ArtworkExhibition', backref='artwork', lazy=True)
     favorites = db.relationship('Favorite', backref='artwork', lazy=True)
@@ -63,9 +67,8 @@ class Artwork(db.Model, SerializerMixin):
             'price': float(self.price),
             'available': self.available,
             'artist_id': self.artist_id,
-            'image': self.image  # Include image serialization if needed
+            'image': self.image
         }
-
 
 class Exhibition(db.Model, SerializerMixin):
     __tablename__ = 'exhibitions'

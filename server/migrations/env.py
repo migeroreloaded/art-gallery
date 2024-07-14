@@ -9,10 +9,6 @@ from alembic import context
 # access to the values within the .ini file in use.
 config = context.config
 
-# Set script_location and version_locations
-config.set_main_option('script_location', 'migrations')
-config.set_main_option('version_locations', 'migrations/versions')
-
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 fileConfig(config.config_file_name)

@@ -36,9 +36,13 @@ def register():
     role = data.get('role', '').lower()
 
     if role not in ['artist', 'art enthusiast']:
-        return jsonify({'message': 'Role must be either "Artist" or "Art Enthusiast"'}), 400
+        return jsonify({'message': 'Role must be either "artist" or "art enthusiast"'}), 400
 
     hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+
+    user = User(email=data['email'], password=hashed_password, role=role)
+    db.session.add(user)
+    db.session.commit()
 
     if role == 'artist':
         try:
@@ -46,24 +50,15 @@ def register():
         except ValueError:
             return jsonify({'message': 'Invalid birthdate format. Use YYYY-MM-DD.'}), 400
 
-        # Handle registration as an artist
         artist = Artist(
             name=data['name'],
             biography=data['biography'],
             birthdate=birthdate,
             nationality=data['nationality'],
-            image=data.get('image', ''),  # Adjust based on your requirements
+            image=data.get('image', ''), 
+            user_id=user.id
         )
         db.session.add(artist)
-        db.session.commit()
-
-        user = User(email=data['email'], password=hashed_password, role=role)
-        db.session.add(user)
-        db.session.commit()
-    else:
-        # Handle registration as an art enthusiast
-        user = User(email=data['email'], password=hashed_password, role=role)
-        db.session.add(user)
         db.session.commit()
 
     return jsonify({'message': 'User created successfully'})
@@ -80,15 +75,16 @@ def login():
         return jsonify({'message': 'Invalid email or password'}), 401
 
 @app.route('/logout', methods=['POST'])
-
 def logout():
     logout_user()
     return jsonify({'message': 'Logout successful'})
 
 @app.route('/dashboard', methods=['GET'])
-
 def dashboard():
-    return jsonify({'message': 'Welcome to your dashboard', 'user': current_user.to_dict()})
+    if current_user.is_authenticated:
+        return jsonify({'message': 'Welcome to your dashboard', 'user': current_user.to_dict()})
+    else:
+        return jsonify({'message': 'Unauthorized'}), 401
 
 @app.route('/users', methods=['GET'])
 def get_users():
@@ -101,11 +97,9 @@ def get_user(id):
     return jsonify(user.to_dict())
 
 @app.route('/users/<int:id>', methods=['PUT'])
-
 def update_user(id):
     user = User.query.get_or_404(id)
     data = request.get_json()
-    user.username = data['username']
     user.email = data['email']
     if 'password' in data:
         user.password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
@@ -113,7 +107,6 @@ def update_user(id):
     return jsonify({'message': 'User updated successfully'})
 
 @app.route('/users/<int:id>', methods=['DELETE'])
-
 def delete_user(id):
     user = User.query.get_or_404(id)
     db.session.delete(user)
@@ -122,20 +115,22 @@ def delete_user(id):
 
 # Artwork Management
 @app.route('/artworks', methods=['POST'])
-
 def create_artwork():
-    data = request.get_json()
-    artwork = Artwork(
-        title=data['title'],
-        medium=data['medium'],
-        style=data['style'],
-        price=data['price'],
-        available=data['available'],
-        artist_id=current_user.id
-    )
-    db.session.add(artwork)
-    db.session.commit()
-    return jsonify({'message': 'Artwork created successfully'})
+    if current_user.is_authenticated and current_user.role == 'artist':
+        data = request.get_json()
+        artwork = Artwork(
+            title=data['title'],
+            medium=data['medium'],
+            style=data['style'],
+            price=data['price'],
+            available=data['available'],
+            artist_id=current_user.artist.id
+        )
+        db.session.add(artwork)
+        db.session.commit()
+        return jsonify({'message': 'Artwork created successfully'})
+    else:
+        return jsonify({'message': 'Unauthorized'}), 403
 
 @app.route('/artworks', methods=['GET'])
 def get_artworks():
@@ -148,139 +143,177 @@ def get_artwork(id):
     return jsonify(artwork.to_dict())
 
 @app.route('/artworks/<int:id>', methods=['PUT'])
-
 def update_artwork(id):
-    artwork = Artwork.query.get_or_404(id)
-    if artwork.artist_id != current_user.id:
+    if current_user.is_authenticated and current_user.role == 'artist':
+        artwork = Artwork.query.get_or_404(id)
+        if artwork.artist.user_id != current_user.id:
+            return jsonify({'message': 'Unauthorized'}), 403
+        data = request.get_json()
+        artwork.title = data['title']
+        artwork.medium = data['medium']
+        artwork.style = data['style']
+        artwork.price = data['price']
+        artwork.available = data['available']
+        db.session.commit()
+        return jsonify({'message': 'Artwork updated successfully'})
+    else:
         return jsonify({'message': 'Unauthorized'}), 403
-    data = request.get_json()
-    artwork.title = data['title']
-    artwork.medium = data['medium']
-    artwork.style = data['style']
-    artwork.price = data['price']
-    artwork.available = data['available']
-    db.session.commit()
-    return jsonify({'message': 'Artwork updated successfully'})
 
 @app.route('/artworks/<int:id>', methods=['DELETE'])
-
 def delete_artwork(id):
-    artwork = Artwork.query.get_or_404(id)
-    if artwork.artist_id != current_user.id:
+    if current_user.is_authenticated and current_user.role == 'artist':
+        artwork = Artwork.query.get_or_404(id)
+        if artwork.artist.user_id != current_user.id:
+            return jsonify({'message': 'Unauthorized'}), 403
+        db.session.delete(artwork)
+        db.session.commit()
+        return jsonify({'message': 'Artwork deleted successfully'})
+    else:
         return jsonify({'message': 'Unauthorized'}), 403
-    db.session.delete(artwork)
-    db.session.commit()
-    return jsonify({'message': 'Artwork deleted successfully'})
 
-# Event Management
-@app.route('/events', methods=['POST'])
+# Exhibition Management
+@app.route('/exhibitions', methods=['POST'])
+def create_exhibition():
+    if current_user.is_authenticated and current_user.role == 'artist':
+        data = request.get_json()
+        try:
+            start_date = datetime.strptime(data['start_date'], '%Y-%m-%d').date()
+            end_date = datetime.strptime(data['end_date'], '%Y-%m-%d').date()
+        except ValueError:
+            return jsonify({'message': 'Invalid date format. Use YYYY-MM-DD.'}), 400
 
-def create_event():
-    data = request.get_json()
-    event = Exhibition(
-        name=data['name'],
-        start_date=data['start_date'],
-        end_date=data['end_date'],
-        description=data['description'],
-        artist_id=current_user.id
-    )
-    db.session.add(event)
-    db.session.commit()
-    return jsonify({'message': 'Event created successfully'})
-
-@app.route('/events', methods=['GET'])
-def get_events():
-    events = Exhibition.query.all()
-    return jsonify([event.to_dict() for event in events])
-
-@app.route('/events/<int:id>', methods=['GET'])
-def get_event(id):
-    event = Exhibition.query.get_or_404(id)
-    return jsonify(event.to_dict())
-
-@app.route('/events/<int:id>', methods=['PUT'])
-
-def update_event(id):
-    event = Exhibition.query.get_or_404(id)
-    if event.artist_id != current_user.id:
+        exhibition = Exhibition(
+            name=data['name'],
+            start_date=start_date,
+            end_date=end_date,
+            description=data['description'],
+            artist_id=current_user.artist.id
+        )
+        db.session.add(exhibition)
+        db.session.commit()
+        return jsonify({'message': 'Exhibition created successfully'})
+    else:
         return jsonify({'message': 'Unauthorized'}), 403
-    data = request.get_json()
-    event.name = data['name']
-    event.start_date = data['start_date']
-    event.end_date = data['end_date']
-    event.description = data['description']
-    db.session.commit()
-    return jsonify({'message': 'Event updated successfully'})
 
-@app.route('/events/<int:id>', methods=['DELETE'])
+@app.route('/exhibitions', methods=['GET'])
+def get_exhibitions():
+    exhibitions = Exhibition.query.all()
+    return jsonify([exhibition.to_dict() for exhibition in exhibitions])
 
-def delete_event(id):
-    event = Exhibition.query.get_or_404(id)
-    if event.artist_id != current_user.id:
+@app.route('/exhibitions/<int:id>', methods=['GET'])
+def get_exhibition(id):
+    exhibition = Exhibition.query.get_or_404(id)
+    return jsonify(exhibition.to_dict())
+
+@app.route('/exhibitions/<int:id>', methods=['PUT'])
+def update_exhibition(id):
+    if current_user.is_authenticated and current_user.role == 'artist':
+        exhibition = Exhibition.query.get_or_404(id)
+        if exhibition.artist.user_id != current_user.id:
+            return jsonify({'message': 'Unauthorized'}), 403
+        data = request.get_json()
+        try:
+            start_date = datetime.strptime(data['start_date'], '%Y-%m-%d').date()
+            end_date = datetime.strptime(data['end_date'], '%Y-%m-%d').date()
+        except ValueError:
+            return jsonify({'message': 'Invalid date format. Use YYYY-MM-DD.'}), 400
+
+        exhibition.name = data['name']
+        exhibition.start_date = start_date
+        exhibition.end_date = end_date
+        exhibition.description = data['description']
+        db.session.commit()
+        return jsonify({'message': 'Exhibition updated successfully'})
+    else:
         return jsonify({'message': 'Unauthorized'}), 403
-    db.session.delete(event)
-    db.session.commit()
-    return jsonify({'message': 'Event deleted successfully'})
+
+@app.route('/exhibitions/<int:id>', methods=['DELETE'])
+def delete_exhibition(id):
+    if current_user.is_authenticated and current_user.role == 'artist':
+        exhibition = Exhibition.query.get_or_404(id)
+        if exhibition.artist.user_id != current_user.id:
+            return jsonify({'message': 'Unauthorized'}), 403
+        db.session.delete(exhibition)
+        db.session.commit()
+        return jsonify({'message': 'Exhibition deleted successfully'})
+    else:
+        return jsonify({'message': 'Unauthorized'}), 403
+
+# Artwork-Exhibition Management
+@app.route('/exhibitions/<int:exhibition_id>/artworks/<int:artwork_id>', methods=['POST'])
+def add_artwork_to_exhibition(exhibition_id, artwork_id):
+    if current_user.is_authenticated and current_user.role == 'artist':
+        exhibition = Exhibition.query.get_or_404(exhibition_id)
+        artwork = Artwork.query.get_or_404(artwork_id)
+        if exhibition.artist.user_id != current_user.id:
+            return jsonify({'message': 'Unauthorized'}), 403
+        if artwork.artist.user_id != current_user.id:
+            return jsonify({'message': 'Unauthorized'}), 403
+
+        artwork_exhibition = ArtworkExhibition(exhibition_id=exhibition_id, artwork_id=artwork_id)
+        db.session.add(artwork_exhibition)
+        db.session.commit()
+        return jsonify({'message': 'Artwork added to exhibition successfully'})
+    else:
+        return jsonify({'message': 'Unauthorized'}), 403
+
+@app.route('/exhibitions/<int:exhibition_id>/artworks/<int:artwork_id>', methods=['DELETE'])
+def remove_artwork_from_exhibition(exhibition_id, artwork_id):
+    if current_user.is_authenticated and current_user.role == 'artist':
+        exhibition = Exhibition.query.get_or_404(exhibition_id)
+        artwork = Artwork.query.get_or_404(artwork_id)
+        if exhibition.artist.user_id != current_user.id:
+            return jsonify({'message': 'Unauthorized'}), 403
+        if artwork.artist.user_id != current_user.id:
+            return jsonify({'message': 'Unauthorized'}), 403
+
+        artwork_exhibition = ArtworkExhibition.query.filter_by(exhibition_id=exhibition_id, artwork_id=artwork_id).first()
+        db.session.delete(artwork_exhibition)
+        db.session.commit()
+        return jsonify({'message': 'Artwork removed from exhibition successfully'})
+    else:
+        return jsonify({'message': 'Unauthorized'}), 403
 
 # Artist Management
-@app.route('/artists', methods=['POST'])
-
-def create_artist():
-    data = request.get_json()
-    artist = Artist(
-        name=data['name'],
-        biography=data['biography'],
-        birthdate=data['birthdate'],
-        nationality=data['nationality'],
-        user_id=current_user.id
-    )
-    db.session.add(artist)
-    db.session.commit()
-    return jsonify({'message': 'Artist created successfully'})
-
-@app.route('/artists', methods=['GET'])
-def get_artists():
-    artists = Artist.query.all()
-    return jsonify([artist.to_dict() for artist in artists])
-
 @app.route('/artists/<int:id>', methods=['GET'])
 def get_artist(id):
     artist = Artist.query.get_or_404(id)
     return jsonify(artist.to_dict())
 
 @app.route('/artists/<int:id>', methods=['PUT'])
-
 def update_artist(id):
-    artist = Artist.query.get_or_404(id)
-    if artist.user_id != current_user.id:
+    if current_user.is_authenticated and current_user.role == 'artist':
+        artist = Artist.query.get_or_404(id)
+        if artist.user_id != current_user.id:
+            return jsonify({'message': 'Unauthorized'}), 403
+        data = request.get_json()
+        try:
+            if 'birthdate' in data:
+                artist.birthdate = datetime.strptime(data['birthdate'], '%Y-%m-%d').date()
+            artist.biography = data.get('biography', artist.biography)
+            artist.nationality = data.get('nationality', artist.nationality)
+            artist.image = data.get('image', artist.image)
+            db.session.commit()
+            return jsonify({'message': 'Artist updated successfully'})
+        except ValueError:
+            return jsonify({'message': 'Invalid birthdate format. Use YYYY-MM-DD.'}), 400
+    else:
         return jsonify({'message': 'Unauthorized'}), 403
-    data = request.get_json()
-    artist.name = data['name']
-    artist.biography = data['biography']
-    artist.birthdate = data['birthdate']
-    artist.nationality = data['nationality']
-    db.session.commit()
-    return jsonify({'message': 'Artist updated successfully'})
 
 @app.route('/artists/<int:id>', methods=['DELETE'])
-
 def delete_artist(id):
-    artist = Artist.query.get_or_404(id)
-    if artist.user_id != current_user.id:
+    if current_user.is_authenticated and current_user.role == 'artist':
+        artist = Artist.query.get_or_404(id)
+        if artist.user_id != current_user.id:
+            return jsonify({'message': 'Unauthorized'}), 403
+        # Delete associated user
+        user = User.query.get(artist.user_id)
+        db.session.delete(artist)
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify({'message': 'Artist and associated user deleted successfully'})
+    else:
         return jsonify({'message': 'Unauthorized'}), 403
-    db.session.delete(artist)
-    db.session.commit()
-    return jsonify({'message': 'Artist deleted successfully'})
-
-# Error Handlers
-@app.errorhandler(404)
-def not_found_error(error):
-    return jsonify({'message': 'Resource not found'}), 404
-
-@app.errorhandler(500)
-def internal_error(error):
-    db.session.rollback()
-    return jsonify({'message': 'Internal server error'}), 500
 
 if __name__ == '__main__':
-    app.run(port=5555, debug=True)
+    app.run(debug=True)
