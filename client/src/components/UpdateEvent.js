@@ -1,43 +1,57 @@
-// UpdateEvent.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const UpdateEvent = ({ eventId, user, onUpdate }) => {
+const UpdateEvent = ({ eventId, onSuccess }) => {
   const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState('');
-  // Other state variables
+  const [endDate, setEndDate] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    // Fetch event details and set initial state
-    axios.get(`http://localhost:5555/events/${eventId}`)
-      .then(response => {
-        const event = response.data;
-        setName(event.name);
-        setStartDate(event.start_date);
-        // Set other state variables
-      })
-      .catch(error => {
+    const fetchEvent = async () => {
+      try {
+        const response = await axios.get(`http://127.0.0.1:5555/events/${eventId}`);
+        const eventData = response.data;
+        setName(eventData.name);
+        setDescription(eventData.description);
+        setStartDate(eventData.start_date);
+        setEndDate(eventData.end_date);
+      } catch (error) {
         console.error('Error fetching event:', error);
-      });
+        setError('Error fetching event details. Please try again later.');
+      }
+    };
+
+    fetchEvent();
   }, [eventId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      await axios.put(`http://localhost:5555/events/${eventId}`, {
+      await axios.put(`http://127.0.0.1:5555/events/${eventId}`, {
         name,
+        description,
         start_date: startDate,
-        // Other updated fields
+        end_date: endDate
       });
-      onUpdate(); // Trigger parent component action after update (e.g., fetch latest data)
+
+      onSuccess(); // Notify parent component (ExhibitionsPage) about the update
     } catch (error) {
       console.error('Error updating event:', error);
+      setError('Error updating event. Please try again later.');
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      {/* Form fields for updating event */}
+      <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Event Name" required />
+      <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Event Description" required />
+      <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
+      <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} required />
+      <button type="submit">Update Event</button>
+      {error && <div>{error}</div>}
     </form>
   );
 };

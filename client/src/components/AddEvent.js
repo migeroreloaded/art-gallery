@@ -1,44 +1,45 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useHistory } from 'react-router-dom'; // Assuming React Router is used for navigation
 
-const AddEvent = ({ user }) => {
+const CreateEvent = ({ onSuccess }) => {
   const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [description, setDescription] = useState('');
   const [error, setError] = useState('');
+
+  const history = useHistory();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      await axios.post('http://localhost:5555/events', {
+      const response = await axios.post('http://127.0.0.1:5555/events', {
         name,
+        description,
         start_date: startDate,
-        end_date: endDate,
-        description
-      }, {
-        headers: {
-          Authorization: `Bearer ${user.token}`
-        }
+        end_date: endDate
       });
-      setError('');
-      // Handle success or redirect
+
+      onSuccess(response.data); // Notify parent component (ExhibitionsPage) about the new event
+      history.push('/exhibitions'); // Redirect to exhibitions page after successful creation
     } catch (error) {
-      setError('Error adding event');
+      console.error('Error creating event:', error);
+      setError('Error creating event. Please try again later.');
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Add Event</h2>
-      {error && <p>{error}</p>}
-      <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} required />
-      <input type="date" placeholder="Start Date" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
-      <input type="date" placeholder="End Date" value={endDate} onChange={(e) => setEndDate(e.target.value)} required />
-      <textarea placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} required />
-      <button type="submit">Add Event</button>
+      <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Event Name" required />
+      <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Event Description" required />
+      <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
+      <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} required />
+      <button type="submit">Create Event</button>
+      {error && <div>{error}</div>}
     </form>
   );
 };
 
-export default AddEvent;
+export default CreateEvent;

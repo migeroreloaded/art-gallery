@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Navbar from './Navbar';
+import CreateEvent from './AddEvent'; // Assuming this is your component for adding events
+import UpdateEvent from './UpdateEvent';
 import {
   PageContainer,
   Header,
@@ -10,26 +12,28 @@ import {
   ExhibitionDescription,
   Footer,
   DeleteButton // Add DeleteButton
-} from './styles'; // Ensure this path is correct
+} from './styles';
+import { useAuth } from './AuthContext';
 
 const ExhibitionsPage = () => {
+  const { isAuthenticated, userData } = useAuth();
   const [exhibitions, setExhibitions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchExhibitions = async () => {
-      try {
-        const response = await axios.get('http://127.0.0.1:5555/events');
-        setExhibitions(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Error fetching exhibitions. Please try again later.');
-        setLoading(false);
-      }
-    };
+  const fetchExhibitions = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:5555/events');
+      setExhibitions(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setError('Error fetching exhibitions. Please try again later.');
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchExhibitions();
   }, []);
 
@@ -41,6 +45,14 @@ const ExhibitionsPage = () => {
       console.error('Error deleting exhibition:', error);
       setError('Error deleting exhibition. Please try again later.');
     }
+  };
+
+  const handleCreateSuccess = (newEvent) => {
+    setExhibitions([...exhibitions, newEvent]);
+  };
+
+  const handleUpdateSuccess = () => {
+    fetchExhibitions(); // Refetch exhibitions after successful update
   };
 
   if (loading) {
@@ -56,6 +68,9 @@ const ExhibitionsPage = () => {
       <Navbar />
       <Header>
         <h1>Exhibitions</h1>
+        {isAuthenticated() && userData.role === 'artist' && (
+          <CreateEvent onSuccess={handleCreateSuccess} />
+        )}
       </Header>
 
       <ExhibitionList>
@@ -65,7 +80,12 @@ const ExhibitionsPage = () => {
             <ExhibitionDescription>{exhibition.description}</ExhibitionDescription>
             <p>Start Date: {exhibition.start_date}</p>
             <p>End Date: {exhibition.end_date}</p>
-            <DeleteButton onClick={() => handleDelete(exhibition.id)}>Delete</DeleteButton>
+            {isAuthenticated() && userData.role === 'artist' && (
+              <DeleteButton onClick={() => handleDelete(exhibition.id)}>Delete</DeleteButton>
+            )}
+            {isAuthenticated() && userData.role === 'artist' && (
+              <UpdateEvent eventId={exhibition.id} onSuccess={handleUpdateSuccess} />
+            )}
           </ExhibitionCard>
         ))}
       </ExhibitionList>
