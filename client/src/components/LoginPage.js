@@ -1,5 +1,8 @@
+// LoginPage.js
+
 import React, { useState } from 'react';
-import axios from 'axios';
+import { Link, useHistory } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 import {
   Container,
   SignInContainer,
@@ -14,16 +17,11 @@ import {
   RightOverlayPanel,
   GhostButton,
   Paragraph
-} from './styles';
-import { useAuth } from './AuthContext';
-import { Link, useHistory } from 'react-router-dom';
+} from './styles'; // Adjust import paths based on your file structure
 
 const LoginPage = () => {
-  const { login } = useAuth(); // Assuming login function is available from AuthContext
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const { login } = useAuth();
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const history = useHistory();
 
@@ -33,24 +31,11 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post('http://localhost:5555/login', formData);
-      console.log(response.data);
-      if (response.data.message === 'Login successful') {
-        login(response.data.token); // Assuming login function sets authentication token
-        if (response.data.role === 'artist') {
-          history.push('/management'); // Redirect to management route for artists
-        } else if (response.data.role === 'art enthusiast') {
-          history.push('/artworks'); // Redirect to artworks route for art enthusiasts
-        } else {
-          // Handle other roles or future cases
-          history.push('/dashboard'); // Default redirect for unrecognized roles
-        }
-      } else {
-        setError(response.data.message || 'Login failed');
-      }
-    } catch (err) {
-      setError(err.response?.data?.message || 'Invalid credentials');
+    const { success, role, message } = await login(formData);
+    if (success) {
+      history.push(`/dashboard/${role}`);
+    } else {
+      setError(message);
     }
   };
 
