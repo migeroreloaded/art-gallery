@@ -1,7 +1,8 @@
 from flask import Flask, request, jsonify, redirect, url_for
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask_login import LoginManager, login_user, logout_user, current_user
 from models import User, Artist, Artwork, Exhibition, ArtworkExhibition, Favorite
 from config import create_app, db
+from datetime import datetime
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 
@@ -31,16 +32,36 @@ def register():
 
     if len(data['password']) < 10:
         return jsonify({'message': 'Password must be at least 10 characters long'}), 400
-    
-    # Ensure role is either "Artist" or "Art Enthusiast"
-    role = data.get('role', '').lower()  # Convert role to lowercase for case insensitivity
-    
+
+    role = data.get('role', '').lower()
+
     if role not in ['artist', 'art enthusiast']:
         return jsonify({'message': 'Role must be either "Artist" or "Art Enthusiast"'}), 400
-    
+
     hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
-    user = User(username=data['username'], email=data['email'], password=hashed_password, role=role)
-    
+
+    if role == 'artist':
+        try:
+            birthdate = datetime.strptime(data['birthdate'], '%Y-%m-%d').date()
+        except ValueError:
+            return jsonify({'message': 'Invalid birthdate format. Use YYYY-MM-DD.'}), 400
+
+        # Handle registration as an artist
+        artist = Artist(
+            name=data['name'],
+            biography=data['biography'],
+            birthdate=birthdate,
+            nationality=data['nationality'],
+            image=data.get('image', ''),  # Adjust based on your requirements
+        )
+        db.session.add(artist)
+        db.session.commit()
+
+        user = User(username=data['username'], email=data['email'], password=hashed_password, role=role, artist=artist)
+    else:
+        # Handle registration as an art enthusiast
+        user = User(username=data['username'], email=data['email'], password=hashed_password, role=role)
+
     db.session.add(user)
     db.session.commit()
 
@@ -58,13 +79,13 @@ def login():
         return jsonify({'message': 'Invalid email or password'}), 401
 
 @app.route('/logout', methods=['POST'])
-@login_required
+
 def logout():
     logout_user()
     return jsonify({'message': 'Logout successful'})
 
 @app.route('/dashboard', methods=['GET'])
-@login_required
+
 def dashboard():
     return jsonify({'message': 'Welcome to your dashboard', 'user': current_user.to_dict()})
 
@@ -79,7 +100,7 @@ def get_user(id):
     return jsonify(user.to_dict())
 
 @app.route('/users/<int:id>', methods=['PUT'])
-@login_required
+
 def update_user(id):
     user = User.query.get_or_404(id)
     data = request.get_json()
@@ -91,7 +112,7 @@ def update_user(id):
     return jsonify({'message': 'User updated successfully'})
 
 @app.route('/users/<int:id>', methods=['DELETE'])
-@login_required
+
 def delete_user(id):
     user = User.query.get_or_404(id)
     db.session.delete(user)
@@ -100,7 +121,7 @@ def delete_user(id):
 
 # Artwork Management
 @app.route('/artworks', methods=['POST'])
-@login_required
+
 def create_artwork():
     data = request.get_json()
     artwork = Artwork(
@@ -126,7 +147,7 @@ def get_artwork(id):
     return jsonify(artwork.to_dict())
 
 @app.route('/artworks/<int:id>', methods=['PUT'])
-@login_required
+
 def update_artwork(id):
     artwork = Artwork.query.get_or_404(id)
     if artwork.artist_id != current_user.id:
@@ -141,7 +162,7 @@ def update_artwork(id):
     return jsonify({'message': 'Artwork updated successfully'})
 
 @app.route('/artworks/<int:id>', methods=['DELETE'])
-@login_required
+
 def delete_artwork(id):
     artwork = Artwork.query.get_or_404(id)
     if artwork.artist_id != current_user.id:
@@ -152,7 +173,7 @@ def delete_artwork(id):
 
 # Event Management
 @app.route('/events', methods=['POST'])
-@login_required
+
 def create_event():
     data = request.get_json()
     event = Exhibition(
@@ -177,7 +198,7 @@ def get_event(id):
     return jsonify(event.to_dict())
 
 @app.route('/events/<int:id>', methods=['PUT'])
-@login_required
+
 def update_event(id):
     event = Exhibition.query.get_or_404(id)
     if event.artist_id != current_user.id:
@@ -191,7 +212,7 @@ def update_event(id):
     return jsonify({'message': 'Event updated successfully'})
 
 @app.route('/events/<int:id>', methods=['DELETE'])
-@login_required
+
 def delete_event(id):
     event = Exhibition.query.get_or_404(id)
     if event.artist_id != current_user.id:
@@ -202,7 +223,7 @@ def delete_event(id):
 
 # Artist Management
 @app.route('/artists', methods=['POST'])
-@login_required
+
 def create_artist():
     data = request.get_json()
     artist = Artist(
@@ -227,7 +248,7 @@ def get_artist(id):
     return jsonify(artist.to_dict())
 
 @app.route('/artists/<int:id>', methods=['PUT'])
-@login_required
+
 def update_artist(id):
     artist = Artist.query.get_or_404(id)
     if artist.user_id != current_user.id:
@@ -241,7 +262,7 @@ def update_artist(id):
     return jsonify({'message': 'Artist updated successfully'})
 
 @app.route('/artists/<int:id>', methods=['DELETE'])
-@login_required
+
 def delete_artist(id):
     artist = Artist.query.get_or_404(id)
     if artist.user_id != current_user.id:
