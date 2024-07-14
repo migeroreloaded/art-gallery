@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // Assuming you are using React Router for navigation
+import { Link, useHistory } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 import {
     NavbarContainer,
     NavbarLeft,
@@ -7,6 +8,49 @@ import {
 } from './styles';
 
 const Navbar = () => {
+    const { isAuthenticated, logout } = useAuth();
+    const history = useHistory();
+
+    const handleLogout = () => {
+        logout();
+        history.push('/login');
+    };
+
+    const authToken = localStorage.getItem('authToken'); // Retrieve authToken from localStorage
+    const userData = JSON.parse(localStorage.getItem('userData')); // Parse userData from localStorage
+
+    let roleLinks = null;
+
+    if (isAuthenticated()) {
+        const role = authToken && userData.role; // Retrieve user role from authToken
+        if (role === 'artist') {
+            roleLinks = (
+                <>
+                    <li className="nav-item">
+                        <Link to="/my-artists" className="nav-link">My Artists</Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link to="/manage-artworks" className="nav-link">Manage Artworks</Link>
+                    </li>
+                    {/* Add more artist-specific links */}
+                </>
+            );
+        } else if (role === 'art enthusiast') {
+            roleLinks = (
+                <>
+                    <li className="nav-item">
+                        <Link to="/explore-artworks" className="nav-link">Explore Artworks</Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link to="/favorite-artists" className="nav-link">Favorite Artists</Link>
+                    </li>
+                    {/* Add more art enthusiast-specific links */}
+                </>
+            );
+        }
+        // Add more conditions for other roles if needed
+    }
+
     return (
         <NavbarContainer>
             <NavbarLeft>
@@ -15,14 +59,24 @@ const Navbar = () => {
             <NavbarRight>
                 <ul className="navbar-nav">
                     <li className="nav-item">
-                        <Link to="/artists" className="nav-link">Artist</Link>
+                        <Link to="/artists" className="nav-link">Artists</Link>
                     </li>
                     <li className="nav-item">
-                        <Link to="/artworks" className="nav-link">Artwork</Link>
+                        <Link to="/artworks" className="nav-link">Artworks</Link>
                     </li>
                     <li className="nav-item">
-                        <Link to="/exhibitions" className="nav-link">Exhibition</Link>
+                        <Link to="/exhibitions" className="nav-link">Exhibitions</Link>
                     </li>
+                    {roleLinks} {/* Render role-specific links */}
+                    {isAuthenticated() ? (
+                        <li className="nav-item">
+                            <button className="nav-link" onClick={handleLogout}>Logout</button>
+                        </li>
+                    ) : (
+                        <li className="nav-item">
+                            <Link to="/login" className="nav-link">Login</Link>
+                        </li>
+                    )}
                 </ul>
             </NavbarRight>
         </NavbarContainer>
