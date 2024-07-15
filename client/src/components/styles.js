@@ -362,10 +362,12 @@ export const ArtistBio = styled.p`
 `;
 
 export const ArtistImage = styled.img`
-  max-width: 100%;
-  height: auto;
+  width: 200px;
+  height: 200px; 
   margin-top: 10px;
-`;
+  border-radius: 100px; 
+  object-fit: cover; 
+  `;
 
 export const ArtistLoading = styled.p`
   font-style: italic;
