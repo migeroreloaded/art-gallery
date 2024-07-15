@@ -11,7 +11,7 @@ const UpdateEvent = ({ eventId, onSuccess }) => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:5555/events/${eventId}`);
+        const response = await axios.get(`http://127.0.0.1:5555/exhibitions/${eventId}`);
         const eventData = response.data;
         setName(eventData.name);
         setDescription(eventData.description);
@@ -30,7 +30,7 @@ const UpdateEvent = ({ eventId, onSuccess }) => {
     e.preventDefault();
 
     try {
-      await axios.put(`http://127.0.0.1:5555/events/${eventId}`, {
+      await axios.put(`http://127.0.0.1:5555/exhibitions/${eventId}`, {
         name,
         description,
         start_date: startDate,
