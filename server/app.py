@@ -229,7 +229,7 @@ def update_exhibition(id):
 
 @app.route('/exhibitions/<int:id>', methods=['DELETE'])
 def delete_exhibition(id):
-    if current_user.is_authenticated and current_user.role == 'artist':
+    if current_user.is_authenticated and current_user.role == 'artist' and exhibition.artist_id == current_user.artist.id:
         exhibition = Exhibition.query.get_or_404(id)
         if exhibition.artist.user_id != current_user.id:
             return jsonify({'message': 'Unauthorized'}), 403
@@ -275,6 +275,11 @@ def remove_artwork_from_exhibition(exhibition_id, artwork_id):
         return jsonify({'message': 'Unauthorized'}), 403
 
 # Artist Management
+@app.route('/artists', methods=['GET'])
+def get_artists():
+    artists = Artist.query.all()
+    return jsonify([artist.to_dict() for artist in artists])
+
 @app.route('/artists/<int:id>', methods=['GET'])
 def get_artist(id):
     artist = Artist.query.get_or_404(id)
@@ -316,4 +321,4 @@ def delete_artist(id):
         return jsonify({'message': 'Unauthorized'}), 403
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=5555, debug=True)
