@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Navbar from './Navbar';
-import CreateEvent from './AddEvent'; // Assuming this is your component for adding events
+import CreateEvent from './AddEvent'; // Assuming this is your component for adding exhibitions
 import UpdateEvent from './UpdateEvent';
 import {
   PageContainer,
@@ -23,7 +23,7 @@ const ExhibitionsPage = () => {
 
   const fetchExhibitions = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:5555/events');
+      const response = await axios.get('http://127.0.0.1:5555/exhibitions');
       setExhibitions(response.data);
       setLoading(false);
     } catch (error) {
@@ -39,7 +39,11 @@ const ExhibitionsPage = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://127.0.0.1:5555/events/${id}`);
+      await axios.delete(`http://127.0.0.1:5555/exhibitions/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        },
+      });
       setExhibitions(exhibitions.filter(exhibition => exhibition.id !== id));
     } catch (error) {
       console.error('Error deleting exhibition:', error);
@@ -80,10 +84,10 @@ const ExhibitionsPage = () => {
             <ExhibitionDescription>{exhibition.description}</ExhibitionDescription>
             <p>Start Date: {exhibition.start_date}</p>
             <p>End Date: {exhibition.end_date}</p>
-            {isAuthenticated() && userData.role === 'artist' && (
+            {isAuthenticated() && userData.role === 'artist' && exhibition.artist_id === userData.artist.id && (
               <DeleteButton onClick={() => handleDelete(exhibition.id)}>Delete</DeleteButton>
             )}
-            {isAuthenticated() && userData.role === 'artist' && (
+            {isAuthenticated() && userData.role === 'artist' && exhibition.artist_id === userData.artist.id && (
               <UpdateEvent eventId={exhibition.id} onSuccess={handleUpdateSuccess} />
             )}
           </ExhibitionCard>

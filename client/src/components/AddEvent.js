@@ -15,7 +15,7 @@ const CreateEvent = ({ onSuccess }) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://127.0.0.1:5555/events', {
+      const response = await axios.post('http://127.0.0.1:5555/exhibitions', {
         name,
         description,
         start_date: startDate,

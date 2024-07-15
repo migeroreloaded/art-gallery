@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+// import axios from 'axios';
 import { Link, useHistory } from 'react-router-dom';
-import { useAuth } from './AuthContext';
+import { useAuth } from './AuthContext'; // Adjust the import path as necessary
 import {
   Container,
   SignInContainer,
@@ -12,19 +13,18 @@ import {
   OverlayContainer,
   Overlay,
   LeftOverlayPanel,
-  // RightOverlayPanel,
   GhostButton,
   Paragraph
 } from './styles'; // Adjust import paths based on your file structure
 
 const LoginPage = () => {
-  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
   const [error, setError] = useState('');
   const history = useHistory();
+  const { login } = useAuth(); // Access login function from AuthContext
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -32,17 +32,20 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { success, role, message } = await login(formData);
-    if (success) {
-      if (role === 'artist') {
-        history.push('/artists');
-      } else if (role === 'art enthusiast') {
-        history.push('/artworks');
+
+    try {
+      const { success, message, role } = await login(formData); // Call login function from AuthContext
+      if (success) {
+        if (role === 'artist') {
+          history.push('/artworks');
+        } else if (role === 'art enthusiast') {
+          history.push('/artists');
+        }
       } else {
-        history.push('/dashboard');
+        setError(message || 'Login failed');
       }
-    } else {
-      setError(message);
+    } catch (err) {
+      setError(err.response?.data?.message || 'An error occurred during login');
     }
   };
 
@@ -85,15 +88,7 @@ const LoginPage = () => {
             </GhostButton>
           </LeftOverlayPanel>
 
-          {/* <RightOverlayPanel>
-            <Title>Hello, Friend!</Title>
-            <Paragraph>
-              Enter your personal details and start your journey with art
-            </Paragraph>
-            <GhostButton as={Link} to="/register">
-              Sign Up
-            </GhostButton>
-          </RightOverlayPanel> */}
+          {/* RightOverlayPanel for another panel if needed */}
         </Overlay>
       </OverlayContainer>
     </Container>
