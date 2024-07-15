@@ -274,7 +274,6 @@ export const PageContainer = styled.div`
   background-color: #f5f5f5;
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
   border-radius: 10px;
-
 `;
 
 export const Header = styled.header`
@@ -282,12 +281,8 @@ export const Header = styled.header`
   padding: 20px;
   background-color: #ff416c;
   color: #fff;
-  // box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
   border-radius: 10px;
-
-
 `;
-
 export const ExhibitionHighlights = styled.div`
 margin-top: 20px;
   padding: 20px;
@@ -362,10 +357,12 @@ export const ArtistBio = styled.p`
 `;
 
 export const ArtistImage = styled.img`
-  max-width: 100%;
-  height: auto;
+  width: 200px;
+  height: 200px; 
   margin-top: 10px;
-`;
+  border-radius: 100px; 
+  object-fit: cover; 
+  `;
 
 export const ArtistLoading = styled.p`
   font-style: italic;
@@ -374,6 +371,14 @@ export const ArtistLoading = styled.p`
 
 export const ErrorMessage = styled.p`
   color: red;
+`;
+
+export const ArtistHeading = styled.h2`
+  text-align: center; /* Center align the text */
+  background-color: #ff69b4; /* Pink background color */
+  color: white; /* White text color */
+  padding: 10px; /* Padding around the text */
+  border-radius: 5px; /* Rounded corners */
 `;
 export const DeleteButton = styled.button`
   background-color: #ff69b4; /* Pinkish background */
@@ -386,5 +391,19 @@ export const DeleteButton = styled.button`
 
   &:hover {
     background-color: #ff1493; /* Darker pink on hover */
+  }
+`;
+
+export const UpdateButton = styled.button`
+  background-color: #4CAF50; /* Green background */
+  color: white; /* White text */
+  border: none; /* Remove default border */
+  padding: 10px 20px; /* Padding for button */
+  margin-top: 10px; /* Margin on top */
+  cursor: pointer; /* Pointer cursor on hover */
+  border-radius: 5px; /* Rounded corners */
+
+  &:hover {
+    background-color: #45a049; /* Darker green on hover */
   }
 `;

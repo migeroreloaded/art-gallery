@@ -1,44 +1,110 @@
-// UpdateArtwork.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { UpdateButton } from './styles'; // Import UpdateButton from styles
 
-const UpdateArtwork = ({ artworkId, user, onUpdate }) => {
+const UpdateArtwork = ({ artworkId, onUpdate }) => {
   const [title, setTitle] = useState('');
   const [medium, setMedium] = useState('');
-  // Other state variables
+  const [style, setStyle] = useState('');
+  const [price, setPrice] = useState('');
+  const [available, setAvailable] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    // Fetch artwork details and set initial state
+    if (!artworkId) {
+      return; // Don't make the API call if artworkId is undefined
+    }
+
     axios.get(`http://localhost:5555/artworks/${artworkId}`)
       .then(response => {
         const artwork = response.data;
         setTitle(artwork.title);
         setMedium(artwork.medium);
-        // Set other state variables
+        setStyle(artwork.style);
+        setPrice(artwork.price);
+        setAvailable(artwork.available);
       })
       .catch(error => {
         console.error('Error fetching artwork:', error);
+        setError('Error fetching artwork. Please try again.');
       });
   }, [artworkId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!artworkId) {
+      console.error('ArtworkId is undefined.');
+      return;
+    }
+
     try {
       await axios.put(`http://localhost:5555/artworks/${artworkId}`, {
         title,
         medium,
-        // Other updated fields
+        style,
+        price,
+        available,
       });
       onUpdate(); // Trigger parent component action after update (e.g., fetch latest data)
     } catch (error) {
       console.error('Error updating artwork:', error);
+      setError('Error updating artwork. Please try again.');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      {/* Form fields for updating artwork */}
-    </form>
+    <div>
+      <h2>Update Artwork</h2>
+      {error && <p>{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Title:</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Medium:</label>
+          <input
+            type="text"
+            value={medium}
+            onChange={(e) => setMedium(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Style:</label>
+          <input
+            type="text"
+            value={style}
+            onChange={(e) => setStyle(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Price:</label>
+          <input
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Available:</label>
+          <input
+            type="checkbox"
+            checked={available}
+            onChange={(e) => setAvailable(e.target.checked)}
+          />
+        </div>
+        <UpdateButton type="submit">Update Artwork</UpdateButton>
+      </form>
+    </div>
   );
 };
 
