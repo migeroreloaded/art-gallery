@@ -5,6 +5,7 @@ import Navbar from './Navbar';
 import {
     ArtistGrid,
     ArtistContainer,
+    ArtistHeading,
     ArtistName,
     ArtistBio,
     ArtistImage,
@@ -47,7 +48,7 @@ const Artist = () => {
     return (
         <div>
             <Navbar />
-            <h2>Artists</h2>
+            <ArtistHeading>Artists</ArtistHeading>
             {loading ? (
                 <ArtistLoading>Loading...</ArtistLoading>
             ) : error ? (
