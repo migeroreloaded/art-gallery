@@ -5,8 +5,8 @@ from flask_jwt_extended import JWTManager, jwt_required, create_access_token, ge
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from datetime import datetime, timedelta
-from config import DevelopmentConfig, ProductionConfig
-from models import User, Artist, Artwork, Exhibition, ArtworkExhibition, Favorite, init_app, db
+from .config import DevelopmentConfig, ProductionConfig
+from .models import User, Artist, Artwork, Exhibition, ArtworkExhibition, Favorite, init_app, db
 from flask_sqlalchemy import SQLAlchemy
 
 

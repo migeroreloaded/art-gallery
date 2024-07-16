@@ -18,7 +18,7 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+    SQLALCHEMY_DATABASE_URI = ('DATABASE_URI', 'sqlite:///:memory')
 
 class ProductionConfig(Config):
     DEBUG = False
