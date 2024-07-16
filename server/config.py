@@ -7,7 +7,7 @@ from flask_restful import Api
 from sqlalchemy import MetaData
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///app.db')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI', 'sqlite:///app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = os.environ.get('SECRET_KEY', 'your_secret_key')
     JSONIFY_PRETTYPRINT_REGULAR = False
