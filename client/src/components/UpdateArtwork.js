@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { UpdateButton } from './styles'; // Import UpdateButton from styles
+import { UpdateButton } from './styles';  // Ensure UpdateButton is imported from styles
 
 const UpdateArtwork = ({ artworkId, onUpdate }) => {
   const [title, setTitle] = useState('');
@@ -45,6 +45,10 @@ const UpdateArtwork = ({ artworkId, onUpdate }) => {
         style,
         price,
         available,
+      }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`
+        }
       });
       onUpdate(); // Trigger parent component action after update (e.g., fetch latest data)
     } catch (error) {

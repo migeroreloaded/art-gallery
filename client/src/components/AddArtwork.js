@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 
-const AddArtwork = ({ user }) => {
+const AddArtwork = ({ onSuccess }) => {
   const [title, setTitle] = useState('');
   const [medium, setMedium] = useState('');
   const [style, setStyle] = useState('');
@@ -10,10 +11,12 @@ const AddArtwork = ({ user }) => {
   const [available, setAvailable] = useState(true);
   const [error, setError] = useState('');
 
+  const history = useHistory();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5555/artworks', {
+      const response = await axios.post('http://localhost:5555/artworks', {
         title,
         medium,
         style,
@@ -22,11 +25,14 @@ const AddArtwork = ({ user }) => {
         available
       }, {
         headers: {
-          Authorization: `Bearer ${user.token}`
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`  // Ensure token is included
         }
       });
+
+      onSuccess(response.data);
+      history.push('/artworks');
+
       setError('');
-      // Handle success or redirect
     } catch (error) {
       setError('Error adding artwork');
     }

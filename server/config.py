@@ -11,6 +11,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = os.environ.get('SECRET_KEY', 'your_secret_key')
     JSONIFY_PRETTYPRINT_REGULAR = False
+    JWT_ACCESS_TOKEN_EXPIRES = False  # Tokens will not expire for this example
 
 class DevelopmentConfig(Config):
     DEBUG = True

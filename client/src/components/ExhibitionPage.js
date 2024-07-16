@@ -35,7 +35,7 @@ const ExhibitionsPage = () => {
 
   useEffect(() => {
     fetchExhibitions();
-  }, []);
+  }, [exhibitions]);
 
   const handleDelete = async (id) => {
     try {
@@ -84,10 +84,10 @@ const ExhibitionsPage = () => {
             <ExhibitionDescription>{exhibition.description}</ExhibitionDescription>
             <p>Start Date: {exhibition.start_date}</p>
             <p>End Date: {exhibition.end_date}</p>
-            {isAuthenticated() && userData.role === 'artist' && exhibition.artist_id === userData.artist.id && (
+            {isAuthenticated() && userData.role === 'artist' && exhibition.artist_id === userData.artist.user_id && (
               <DeleteButton onClick={() => handleDelete(exhibition.id)}>Delete</DeleteButton>
             )}
-            {isAuthenticated() && userData.role === 'artist' && exhibition.artist_id === userData.artist.id && (
+            {isAuthenticated() && userData.role === 'artist' && exhibition.artist_id === userData.artist.user_id && (
               <UpdateEvent eventId={exhibition.id} onSuccess={handleUpdateSuccess} />
             )}
           </ExhibitionCard>

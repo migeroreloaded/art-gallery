@@ -20,6 +20,10 @@ const CreateEvent = ({ onSuccess }) => {
         description,
         start_date: startDate,
         end_date: endDate
+      }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`  // Ensure token is included
+        }
       });
 
       onSuccess(response.data); // Notify parent component (ExhibitionsPage) about the new event

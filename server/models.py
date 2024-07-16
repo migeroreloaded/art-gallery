@@ -2,6 +2,9 @@ from flask_login import UserMixin
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 from config import db
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 class User(db.Model, UserMixin, SerializerMixin):
     __tablename__ = 'users'
@@ -112,3 +115,6 @@ class Favorite(db.Model, SerializerMixin):
             'user_id': self.user_id,
             'artwork_id': self.artwork_id,
         }
+    
+def init_app(app):
+    db.init_app(app)

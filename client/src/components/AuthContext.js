@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
       setAuthToken(token);
       setUserData(user);
     }
+    console.log('Auth Token in useEffect:', authToken); // Log authToken in useEffect
   }, []);
 
   // Function to log in user
@@ -24,7 +25,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post('http://localhost:5555/login', formData);
       if (response.data.message === 'Login successful') {
-        const token = response.data.token;
+        const token = response.data.access_token;
         const user = response.data.user; // Assuming your backend sends back user data
 
         setAuthToken(token);
@@ -33,6 +34,8 @@ export const AuthProvider = ({ children }) => {
         // Store token and user data in localStorage for persistence
         localStorage.setItem('authToken', token);
         localStorage.setItem('userData', JSON.stringify(user));
+
+        console.log('Auth Token after login:', authToken); // Log authToken after setting in state
 
         return { success: true, role: user.role };
       } else {
