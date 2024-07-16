@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Navbar from './Navbar';
-import AddArtwork from './AddArtwork';
+import AddArtwork from './AddArtwork'; // Ensure AddArtwork is imported
 import {
   ArtworkGrid,
   ArtworkContainer,
@@ -12,25 +11,29 @@ import {
   ArtworkDetail,
   ArtworkAvailability,
   ArtworkLoading,
-  DeleteButton,  // Import DeleteButton from styles
-  UpdateButton  // Import UpdateButton from styles
+  DeleteButton,
+  UpdateButton
 } from './styles';
 import { useAuth } from './AuthContext';
-import UpdateArtwork from './UpdateArtwork';  // Ensure UpdateArtwork is imported
+import UpdateArtwork from './UpdateArtwork'; // Ensure UpdateArtwork is imported
 
 const Artwork = () => {
-  const { isAuthenticated, userData } = useAuth();
+  const { isAuthenticated, authToken, userData } = useAuth(); // Access authToken from useAuth
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedArtworkId, setSelectedArtworkId] = useState(null); // Added to manage the selected artwork for updates
   const imageSize = 200;
 
-  // Define the fetchArtworks function
+  // Fetch artworks using fetch()
   const fetchArtworks = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:5555/artworks');
-      setArtworks(response.data);
+      const response = await fetch('http://127.0.0.1:5555/artworks');
+      if (!response.ok) {
+        throw new Error('Failed to fetch artworks');
+      }
+      const data = await response.json();
+      setArtworks(data);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -44,13 +47,18 @@ const Artwork = () => {
     fetchArtworks();
   }, []);
 
+  // Handle artwork deletion
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://127.0.0.1:5555/artworks/${id}`, {
+      const response = await fetch(`http://127.0.0.1:5555/artworks/${id}`, {
+        method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${authToken}`,
         },
       });
+      if (!response.ok) {
+        throw new Error('Failed to delete artwork');
+      }
       setArtworks(artworks.filter(artwork => artwork.id !== id));
     } catch (error) {
       console.error('Error deleting artwork:', error);
@@ -58,13 +66,15 @@ const Artwork = () => {
     }
   };
 
+  // Handle successful creation of artwork
   const handleCreateSuccess = (newArtwork) => {
     setArtworks([...artworks, newArtwork]);
   };
 
+  // Handle successful update of artwork
   const handleUpdateSuccess = () => {
-    fetchArtworks();  // Refetch artworks after successful update
-    setSelectedArtworkId(null);  // Clear the selected artwork for update
+    fetchArtworks(); // Refetch artworks after successful update
+    setSelectedArtworkId(null); // Clear the selected artwork for update
   };
 
   return (

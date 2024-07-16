@@ -1,5 +1,66 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+
+const Container = styled.div`
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
+
+const Label = styled.label`
+  font-weight: bold;
+  margin-bottom: 5px;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  outline: none;
+  transition: border-color 0.3s ease;
+  margin-top: 5px;
+
+  &:focus {
+    border-color: #4caf50;
+  }
+`;
+
+const CheckboxInput = styled.input`
+  margin-top: 5px;
+`;
+
+const Button = styled.button`
+  padding: 12px 20px;
+  font-size: 1rem;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+
+  &:hover {
+    background-color: #45a049;
+  }
+`;
+
+const ErrorMessage = styled.p`
+  color: red;
+  margin-top: 10px;
+`;
 
 const UpdateArtwork = ({ artworkId, onUpdate }) => {
   const [title, setTitle] = useState('');
@@ -8,165 +69,119 @@ const UpdateArtwork = ({ artworkId, onUpdate }) => {
   const [price, setPrice] = useState('');
   const [available, setAvailable] = useState(false);
   const [error, setError] = useState('');
+  const history = useHistory();
 
   useEffect(() => {
     if (!artworkId) {
-      return; // Don't make the API call if artworkId is undefined
+      return;
     }
 
-    axios.get(`http://localhost:5555/artworks/${artworkId}`)
-      .then(response => {
-        const artwork = response.data;
+    const fetchArtwork = async () => {
+      try {
+        const response = await fetch(`http://localhost:5555/artworks/${artworkId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch artwork');
+        }
+        const artwork = await response.json();
         setTitle(artwork.title);
         setMedium(artwork.medium);
         setStyle(artwork.style);
         setPrice(artwork.price);
         setAvailable(artwork.available);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error fetching artwork:', error);
         setError('Error fetching artwork. Please try again.');
-      });
+      }
+    };
+
+    fetchArtwork();
   }, [artworkId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!artworkId) {
-      console.error('ArtworkId is undefined.');
-      return;
-    }
-
     try {
-      await axios.put(`http://localhost:5555/artworks/${artworkId}`, {
-        title,
-        medium,
-        style,
-        price,
-        available,
-      }, {
+      const response = await fetch(`http://localhost:5555/artworks/${artworkId}`, {
+        method: 'PUT',
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('authToken')}`
-        }
+        },
+        body: JSON.stringify({
+          title,
+          medium,
+          style,
+          price,
+          available,
+        })
       });
-      onUpdate(); // Trigger parent component action after update (e.g., fetch latest data)
+
+      if (!response.ok) {
+        throw new Error('Failed to update artwork');
+      }
+
+      onUpdate();
+      history.push('/artworks'); // Redirect to artworks page after update
     } catch (error) {
       console.error('Error updating artwork:', error);
       setError('Error updating artwork. Please try again.');
     }
   };
 
-  const containerStyle = {
-    maxWidth: '600px',
-    margin: '0 auto',
-    padding: '20px',
-    backgroundColor: '#fff',
-    border: '1px solid #ddd',
-    borderRadius: '5px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-  };
-
-  const formStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-  };
-
-  const inputStyle = {
-    width: '100%',
-    padding: '10px',
-    fontSize: '1rem',
-    border: '1px solid #ccc',
-    borderRadius: '3px',
-    outline: 'none',
-    transition: 'border-color 0.3s ease',
-    marginTop: '5px',
-    ':focus': {
-      borderColor: '#4caf50',
-    }
-  };
-
-  const labelStyle = {
-    fontWeight: 'bold',
-    marginBottom: '5px',
-  };
-
-  const buttonStyle = {
-    padding: '12px 20px',
-    fontSize: '1rem',
-    backgroundColor: '#4caf50',
-    color: 'white',
-    border: 'none',
-    borderRadius: '3px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease',
-    marginTop: '10px',
-    ':hover': {
-      backgroundColor: '#45a049',
-    }
-  };
-
-  const errorStyle = {
-    color: 'red',
-    marginTop: '10px',
-  };
-
   return (
-    <div style={containerStyle}>
+    <Container>
       <h2>Update Artwork</h2>
-      {error && <p style={errorStyle}>{error}</p>}
-      <form style={formStyle} onSubmit={handleSubmit}>
+      {error && <ErrorMessage>{error}</ErrorMessage>}
+      <Form onSubmit={handleSubmit}>
         <div>
-          <label style={labelStyle}>Title:</label>
-          <input
+          <Label>Title:</Label>
+          <Input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            style={inputStyle}
             required
           />
         </div>
         <div>
-          <label style={labelStyle}>Medium:</label>
-          <input
+          <Label>Medium:</Label>
+          <Input
             type="text"
             value={medium}
             onChange={(e) => setMedium(e.target.value)}
-            style={inputStyle}
             required
           />
         </div>
         <div>
-          <label style={labelStyle}>Style:</label>
-          <input
+          <Label>Style:</Label>
+          <Input
             type="text"
             value={style}
             onChange={(e) => setStyle(e.target.value)}
-            style={inputStyle}
             required
           />
         </div>
         <div>
-          <label style={labelStyle}>Price:</label>
-          <input
+          <Label>Price:</Label>
+          <Input
             type="number"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            style={inputStyle}
             required
           />
         </div>
         <div>
-          <label style={labelStyle}>Available:</label>
-          <input
+          <Label>Available:</Label>
+          <CheckboxInput
             type="checkbox"
             checked={available}
             onChange={(e) => setAvailable(e.target.checked)}
           />
         </div>
-        <button type="submit" style={buttonStyle}>Update Artwork</button>
-      </form>
-    </div>
+        <Button type="submit">Update Artwork</Button>
+      </Form>
+    </Container>
   );
 };
 
 export default UpdateArtwork;
+

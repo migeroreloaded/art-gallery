@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React from 'react';
+import { useFormik } from 'formik';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -51,47 +51,80 @@ const SubmitButton = styled.button`
 `;
 
 const CreateEvent = ({ onSuccess }) => {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [error, setError] = useState('');
-
   const history = useHistory();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      description: '',
+      startDate: '',
+      endDate: ''
+    },
+    onSubmit: async (values, { setSubmitting, setErrors }) => {
+      try {
+        const response = await fetch('http://localhost:5555/exhibitions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`
+          },
+          body: JSON.stringify({
+            name: values.name,
+            description: values.description,
+            start_date: values.startDate,
+            end_date: values.endDate
+          }),
+        });
 
-    try {
-      const response = await axios.post('http://localhost:5555/exhibitions', {
-        name,
-        description,
-        start_date: startDate,
-        end_date: endDate
-      }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`  // Ensure token is included
+        if (!response.ok) {
+          throw new Error('Error creating event');
         }
-      });
 
-      onSuccess(response.data);
-      history.push('/exhibitions');
-
-      setError('');
-    } catch (error) {
-      console.error('Error creating event:', error);
-      setError('Error creating event. Please try again later.');
-    }
-  };
+        const data = await response.json();
+        onSuccess(data);
+        history.push('/exhibitions');
+      } catch (error) {
+        console.error('Error creating event:', error);
+        setErrors({ submit: 'Error creating event. Please try again later.' });
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <FormInput type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Event Name" required />
-      <FormTextarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Event Description" required />
-      <FormInput type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
-      <FormInput type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} required />
-      <SubmitButton type="submit">Create Event</SubmitButton>
-      {error && <FormError>{error}</FormError>}
+    <Form onSubmit={formik.handleSubmit}>
+      <FormInput
+        type="text"
+        name="name"
+        value={formik.values.name}
+        onChange={formik.handleChange}
+        placeholder="Event Name"
+        required
+      />
+      <FormTextarea
+        name="description"
+        value={formik.values.description}
+        onChange={formik.handleChange}
+        placeholder="Event Description"
+        required
+      />
+      <FormInput
+        type="date"
+        name="startDate"
+        value={formik.values.startDate}
+        onChange={formik.handleChange}
+        required
+      />
+      <FormInput
+        type="date"
+        name="endDate"
+        value={formik.values.endDate}
+        onChange={formik.handleChange}
+        required
+      />
+      <SubmitButton type="submit" disabled={formik.isSubmitting}>Create Event</SubmitButton>
+      {formik.errors.submit && <FormError>{formik.errors.submit}</FormError>}
     </Form>
   );
 };

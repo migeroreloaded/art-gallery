@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-// import axios from 'axios';
+import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useAuth } from './AuthContext'; // Adjust the import path as necessary
+import { useFormik } from 'formik'; // Import Formik
 import {
   Container,
   SignInContainer,
@@ -18,57 +18,58 @@ import {
 } from './styles'; // Adjust import paths based on your file structure
 
 const LoginPage = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
-  const [error, setError] = useState('');
-  const history = useHistory();
   const { login } = useAuth(); // Access login function from AuthContext
+  const history = useHistory();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const { success, message, role } = await login(formData); // Call login function from AuthContext
-      if (success) {
-        if (role === 'artist') {
-          history.push('/artworks');
-        } else if (role === 'art enthusiast') {
-          history.push('/artists');
+  // Formik Setup
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    onSubmit: async (values) => {
+      try {
+        const { success, message, role } = await login(values); // Call login function from AuthContext
+        if (success) {
+          if (role === 'artist') {
+            history.push('/artworks');
+          } else if (role === 'art enthusiast') {
+            history.push('/artists');
+          }
+        } else {
+          formik.setFieldError('email', message || 'Login failed');
+          formik.setFieldError('password', message || 'Login failed');
         }
-      } else {
-        setError(message || 'Login failed');
+      } catch (err) {
+        formik.setFieldError('email', err.response?.data?.message || 'An error occurred during login');
+        formik.setFieldError('password', err.response?.data?.message || 'An error occurred during login');
       }
-    } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred during login');
-    }
-  };
+    },
+  });
 
   return (
     <Container>
       <SignInContainer>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={formik.handleSubmit}>
           <Title>Log in</Title>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
+          {formik.errors.email && formik.touched.email && <p style={{ color: 'red' }}>{formik.errors.email}</p>}
           <Input
             type='email'
             placeholder='Email'
             name='email'
-            value={formData.email}
-            onChange={handleChange}
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             required
           />
+          {formik.errors.password && formik.touched.password && <p style={{ color: 'red' }}>{formik.errors.password}</p>}
           <Input
             type='password'
             placeholder='Password'
             name='password'
-            value={formData.password}
-            onChange={handleChange}
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             required
           />
           <Anchor href='#'>Forgot your password?</Anchor>

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React from 'react';
+import { useFormik } from 'formik';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -57,55 +57,57 @@ const SubmitButton = styled.button`
 `;
 
 const AddArtwork = ({ onSuccess }) => {
-  const [title, setTitle] = useState('');
-  const [medium, setMedium] = useState('');
-  const [style, setStyle] = useState('');
-  const [price, setPrice] = useState(0);
-  const [imageURL, setImageURL] = useState('');
-  const [available, setAvailable] = useState(true);
-  const [error, setError] = useState('');
-
   const history = useHistory();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('http://localhost:5555/artworks', {
-        title,
-        medium,
-        style,
-        price,
-        imageURL,
-        available
-      }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`  // Ensure token is included
+  const formik = useFormik({
+    initialValues: {
+      title: '',
+      medium: '',
+      style: '',
+      price: 0,
+      imageURL: '',
+      available: true,
+    },
+    onSubmit: async (values, { setSubmitting, setErrors }) => {
+      try {
+        const response = await fetch('http://localhost:5555/artworks', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`
+          },
+          body: JSON.stringify(values),
+        });
+
+        if (!response.ok) {
+          throw new Error('Error adding artwork');
         }
-      });
 
-      onSuccess(response.data);
-      history.push('/artworks');
-
-      setError('');
-    } catch (error) {
-      setError('Error adding artwork');
-    }
-  };
+        const data = await response.json();
+        onSuccess(data);
+        history.push('/artworks');
+      } catch (error) {
+        setErrors({ submit: error.message });
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form onSubmit={formik.handleSubmit}>
       <FormTitle>Add Artwork</FormTitle>
-      {error && <FormError>{error}</FormError>}
-      <FormInput type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
-      <FormInput type="text" placeholder="Medium" value={medium} onChange={(e) => setMedium(e.target.value)} required />
-      <FormInput type="text" placeholder="Style" value={style} onChange={(e) => setStyle(e.target.value)} required />
-      <FormInput type="number" placeholder="Price" value={price} onChange={(e) => setPrice(e.target.value)} required />
-      <FormInput type="text" placeholder="Image URL" value={imageURL} onChange={(e) => setImageURL(e.target.value)} required />
+      {formik.errors.submit && <FormError>{formik.errors.submit}</FormError>}
+      <FormInput type="text" name="title" placeholder="Title" value={formik.values.title} onChange={formik.handleChange} required />
+      <FormInput type="text" name="medium" placeholder="Medium" value={formik.values.medium} onChange={formik.handleChange} required />
+      <FormInput type="text" name="style" placeholder="Style" value={formik.values.style} onChange={formik.handleChange} required />
+      <FormInput type="number" name="price" placeholder="Price" value={formik.values.price} onChange={formik.handleChange} required />
+      <FormInput type="text" name="imageURL" placeholder="Image URL" value={formik.values.imageURL} onChange={formik.handleChange} required />
       <FormCheckbox>
         Available:
-        <input type="checkbox" checked={available} onChange={(e) => setAvailable(e.target.checked)} />
+        <input type="checkbox" name="available" checked={formik.values.available} onChange={formik.handleChange} />
       </FormCheckbox>
-      <SubmitButton type="submit">Add Artwork</SubmitButton>
+      <SubmitButton type="submit" disabled={formik.isSubmitting}>Add Artwork</SubmitButton>
     </Form>
   );
 };

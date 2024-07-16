@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
 import {
@@ -22,8 +21,12 @@ const Artist = () => {
     useEffect(() => {
         const fetchArtists = async () => {
             try {
-                const response = await axios.get('http://127.0.0.1:5555/artists');
-                setArtists(response.data);
+                const response = await fetch('http://127.0.0.1:5555/artists');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch');
+                }
+                const data = await response.json();
+                setArtists(data);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -37,7 +40,9 @@ const Artist = () => {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://127.0.0.1:5555/artists/${id}`);
+            await fetch(`http://127.0.0.1:5555/artists/${id}`, {
+                method: 'DELETE'
+            });
             setArtists(artists.filter(artist => artist.id !== id));
         } catch (error) {
             console.error('Error deleting artist:', error);

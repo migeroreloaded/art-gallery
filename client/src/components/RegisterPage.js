@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useFormik } from 'formik';
 import {
   Container,
   SignUpContainer,
@@ -18,159 +18,229 @@ import {
 import { Link } from 'react-router-dom';
 
 const RegisterForm = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
-    role: '', // Default to 'blank'
-    name: '',
-    biography: '',
-    birthdate: '',
-    nationality: '',
-    image: '',
-  });
   const [error, setError] = useState('');
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+      confirmPassword: '',
+      role: '',
+      name: '',
+      biography: '',
+      birthdate: '',
+      nationality: '',
+      image: ''
+    },
+    validate: values => {
+      const errors = {};
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    try {
-      const response = await axios.post('http://localhost:5555/register', formData);
-      console.log(response.data);
-      if (response.data.message === 'User created successfully') {
-        // Handle successful registration (e.g., redirect or set token)
-      } else {
-        setError(response.data.message || 'Registration failed');
+      if (!values.email) {
+        errors.email = 'Required';
+      } else if (!/^\S+@\S+\.\S+$/.test(values.email)) {
+        errors.email = 'Invalid email address';
       }
-    } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred during sign up');
+
+      if (!values.password) {
+        errors.password = 'Required';
+      } else if (values.password.length < 6) {
+        errors.password = 'Password must be at least 6 characters long';
+      }
+
+      if (values.password !== values.confirmPassword) {
+        errors.confirmPassword = 'Passwords do not match';
+      }
+
+      if (values.role === '') {
+        errors.role = 'Required';
+      }
+
+      return errors;
+    },
+    onSubmit: async (values) => {
+      try {
+        const response = await fetch('http://localhost:5555/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(values)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          console.log(data);
+          // Handle successful registration (e.g., redirect or set token)
+        } else {
+          setError(data.message || 'Registration failed');
+        }
+      } catch (err) {
+        console.error('Error during sign up:', err);
+        setError('An error occurred during sign up. Please try again later.');
+      }
     }
-  };
+  });
 
   return (
     <Container>
       <SignUpContainer>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={formik.handleSubmit}>
           <Title>Create Account</Title>
           {error && <p style={{ color: 'red' }}>{error}</p>}
           <label htmlFor="role">Role:</label><br />
           <Select
             id="role"
             name="role"
-            value={formData.role}
-            onChange={handleChange}
+            value={formik.values.role}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
           >
             <option value="">Choose role</option>
             <option value="art enthusiast">Art Enthusiast</option>
             <option value="artist">Artist</option>
-          </Select><br /><br />
-          {formData.role === '' && (
-            <>
-            <p>Please select a role before proceeding.</p>
-            </>
-          )}
-          {formData.role === 'art enthusiast' && (
+          </Select>
+          {formik.touched.role && formik.errors.role ? (
+            <div style={{ color: 'red' }}>{formik.errors.role}</div>
+          ) : null}
+          {formik.values.role === 'art enthusiast' && (
             <>
               <Input
                 type='email'
                 placeholder='Email'
                 name='email'
-                value={formData.email}
-                onChange={handleChange}
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 required
               />
+              {formik.touched.email && formik.errors.email ? (
+                <div style={{ color: 'red' }}>{formik.errors.email}</div>
+              ) : null}
               <Input
                 type='password'
                 placeholder='Password'
                 name='password'
-                value={formData.password}
-                onChange={handleChange}
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 required
               />
+              {formik.touched.password && formik.errors.password ? (
+                <div style={{ color: 'red' }}>{formik.errors.password}</div>
+              ) : null}
               <Input
                 type='password'
                 placeholder='Confirm Password'
                 name='confirmPassword'
-                value={formData.confirmPassword}
-                onChange={handleChange}
+                value={formik.values.confirmPassword}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 required
               />
+              {formik.touched.confirmPassword && formik.errors.confirmPassword ? (
+                <div style={{ color: 'red' }}>{formik.errors.confirmPassword}</div>
+              ) : null}
             </>
           )}
-          {formData.role === 'artist' && (
+          {formik.values.role === 'artist' && (
             <>
               <Input
                 type='email'
                 placeholder='Email'
                 name='email'
-                value={formData.email}
-                onChange={handleChange}
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 required
               />
+              {formik.touched.email && formik.errors.email ? (
+                <div style={{ color: 'red' }}>{formik.errors.email}</div>
+              ) : null}
               <Input
                 type='password'
                 placeholder='Password'
                 name='password'
-                value={formData.password}
-                onChange={handleChange}
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 required
               />
+              {formik.touched.password && formik.errors.password ? (
+                <div style={{ color: 'red' }}>{formik.errors.password}</div>
+              ) : null}
               <Input
                 type='password'
                 placeholder='Confirm Password'
                 name='confirmPassword'
-                value={formData.confirmPassword}
-                onChange={handleChange}
+                value={formik.values.confirmPassword}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 required
               />
+              {formik.touched.confirmPassword && formik.errors.confirmPassword ? (
+                <div style={{ color: 'red' }}>{formik.errors.confirmPassword}</div>
+              ) : null}
               <Input
                 type='text'
                 placeholder='Name'
                 name='name'
-                value={formData.name}
-                onChange={handleChange}
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 required
               />
+              {formik.touched.name && formik.errors.name ? (
+                <div style={{ color: 'red' }}>{formik.errors.name}</div>
+              ) : null}
               <Input
                 type='text'
                 placeholder='Biography'
                 name='biography'
-                value={formData.biography}
-                onChange={handleChange}
+                value={formik.values.biography}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 required
               />
+              {formik.touched.biography && formik.errors.biography ? (
+                <div style={{ color: 'red' }}>{formik.errors.biography}</div>
+              ) : null}
               <Input
                 type='date'
                 placeholder='Birthdate'
                 name='birthdate'
-                value={formData.birthdate}
-                onChange={handleChange}
+                value={formik.values.birthdate}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 required
               />
+              {formik.touched.birthdate && formik.errors.birthdate ? (
+                <div style={{ color: 'red' }}>{formik.errors.birthdate}</div>
+              ) : null}
               <Input
                 type='text'
                 placeholder='Nationality'
                 name='nationality'
-                value={formData.nationality}
-                onChange={handleChange}
+                value={formik.values.nationality}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 required
               />
+              {formik.touched.nationality && formik.errors.nationality ? (
+                <div style={{ color: 'red' }}>{formik.errors.nationality}</div>
+              ) : null}
               <Input
                 type='text'
                 placeholder='Image URL'
                 name='image'
-                value={formData.image}
-                onChange={handleChange}
+                value={formik.values.image}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 required
               />
+              {formik.touched.image && formik.errors.image ? (
+                <div style={{ color: 'red' }}>{formik.errors.image}</div>
+              ) : null}
             </>
           )}
           <Button type="submit">Sign Up</Button>

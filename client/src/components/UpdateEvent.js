@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useFormik } from 'formik';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -51,24 +51,24 @@ const SubmitButton = styled.button`
 `;
 
 const UpdateEvent = ({ eventId, onSuccess }) => {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
   const [error, setError] = useState('');
-
   const history = useHistory();
 
   useEffect(() => {
     // Fetch existing event details for the given eventId
     const fetchEventDetails = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:5555/exhibitions/${eventId}`);
-        const eventData = response.data;
-        setName(eventData.name);
-        setDescription(eventData.description);
-        setStartDate(eventData.start_date);
-        setEndDate(eventData.end_date);
+        const response = await fetch(`http://127.0.0.1:5555/exhibitions/${eventId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch');
+        }
+        const eventData = await response.json();
+        formik.setValues({
+          name: eventData.name,
+          description: eventData.description,
+          startDate: eventData.start_date,
+          endDate: eventData.end_date
+        });
       } catch (error) {
         console.error('Error fetching event details:', error);
         setError('Error fetching event details. Please try again later.');
@@ -78,40 +78,54 @@ const UpdateEvent = ({ eventId, onSuccess }) => {
     fetchEventDetails();
   }, [eventId]); // Fetch details when the component mounts or eventId changes
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      description: '',
+      startDate: '',
+      endDate: ''
+    },
+    onSubmit: async (values) => {
+      try {
+        const response = await fetch(`http://127.0.0.1:5555/exhibitions/${eventId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('authToken')}`
+          },
+          body: JSON.stringify({
+            name: values.name,
+            description: values.description,
+            start_date: values.startDate,
+            end_date: values.endDate
+          }),
+        });
 
-    try {
-      const response = await axios.put(`http://127.0.0.1:5555/exhibitions/${eventId}`, {
-        name,
-        description,
-        start_date: startDate,
-        end_date: endDate
-      }, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`
+        if (!response.ok) {
+          throw new Error('Failed to update');
         }
-      });
 
-      onSuccess(response.data); // Notify parent component (ExhibitionsPage) about the update
-      history.push('/exhibitions'); // Redirect to exhibitions page after successful update
-    } catch (error) {
-      console.error('Error updating event:', error);
-      setError('Error updating event. Please try again later.');
-    }
-  };
+        onSuccess(); // Notify parent component (ExhibitionsPage) about the update
+        history.push('/exhibitions'); // Redirect to exhibitions page after successful update
+      } catch (error) {
+        console.error('Error updating event:', error);
+        setError('Error updating event. Please try again later.');
+      }
+    },
+  });
 
   return (
     <div>
       <h2>Update Event</h2>
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={formik.handleSubmit}>
         <div>
           <label htmlFor="name">Name:</label>
           <FormInput
             type="text"
             id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            name="name"
+            value={formik.values.name}
+            onChange={formik.handleChange}
             required
           />
         </div>
@@ -120,8 +134,9 @@ const UpdateEvent = ({ eventId, onSuccess }) => {
           <FormInput
             type="date"
             id="startDate"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
+            name="startDate"
+            value={formik.values.startDate}
+            onChange={formik.handleChange}
             required
           />
         </div>
@@ -130,8 +145,9 @@ const UpdateEvent = ({ eventId, onSuccess }) => {
           <FormInput
             type="date"
             id="endDate"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
+            name="endDate"
+            value={formik.values.endDate}
+            onChange={formik.handleChange}
             required
           />
         </div>
@@ -139,8 +155,9 @@ const UpdateEvent = ({ eventId, onSuccess }) => {
           <label htmlFor="description">Description:</label>
           <FormTextarea
             id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            name="description"
+            value={formik.values.description}
+            onChange={formik.handleChange}
             required
           />
         </div>

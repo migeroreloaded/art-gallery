@@ -1,29 +1,33 @@
 import React from 'react';
-import axios from 'axios';
 
-// Define the DeleteArtwork component
 const DeleteArtwork = ({ artworkId, onDelete }) => {
-  // Function to handle the delete action
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:5555/artworks/${artworkId}`, {
+      const response = await fetch(`http://localhost:5555/artworks/${artworkId}`, {
+        method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,  // Ensure token is included
-        },
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        }
       });
-      onDelete(); // Notify parent component of successful deletion
+
+      if (response.ok) {
+        onDelete(); // Notify parent component of successful deletion
+      } else {
+        const data = await response.json();
+        console.error('Error deleting artwork:', data.message);
+        alert('Error deleting artwork. Please try again.'); // Provide feedback to the user
+      }
     } catch (error) {
       console.error('Error deleting artwork:', error);
-      alert('Error deleting artwork. Please try again.');  // Provide feedback to the user
+      alert('Error deleting artwork. Please try again.'); // Provide feedback to the user
     }
   };
 
   return (
-    <button onClick={handleDelete} style={buttonStyle}>Delete Artwork</button>  // Use inline style or imported style
+    <button onClick={handleDelete} style={buttonStyle}>Delete Artwork</button>
   );
 };
 
-// Define button styles
 const buttonStyle = {
   backgroundColor: 'red',
   color: 'white',
@@ -33,5 +37,4 @@ const buttonStyle = {
   marginRight: '5px'
 };
 
-// Export the component
 export default DeleteArtwork;

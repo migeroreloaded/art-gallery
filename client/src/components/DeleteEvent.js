@@ -1,22 +1,37 @@
-// DeleteEvent.js
 import React from 'react';
-import axios from 'axios';
 
 const DeleteEvent = ({ eventId, onDelete }) => {
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:5555/events/${eventId}`);
-      onDelete(); // Trigger parent component action after deletion (e.g., update state)
+      const response = await fetch(`http://localhost:5555/events/${eventId}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        onDelete(); // Trigger parent component action after deletion (e.g., update state)
+      } else {
+        const data = await response.json();
+        console.error('Error deleting event:', data.message);
+        alert('Error deleting event. Please try again.'); // Provide feedback to the user
+      }
     } catch (error) {
       console.error('Error deleting event:', error);
+      alert('Error deleting event. Please try again.'); // Provide feedback to the user
     }
   };
 
   return (
-    <div>
-      <button onClick={handleDelete}>Delete Event</button>
-    </div>
+    <button onClick={handleDelete} style={buttonStyle}>Delete Event</button>
   );
+};
+
+const buttonStyle = {
+  backgroundColor: 'red',
+  color: 'white',
+  border: 'none',
+  padding: '5px 10px',
+  cursor: 'pointer',
+  marginRight: '5px'
 };
 
 export default DeleteEvent;

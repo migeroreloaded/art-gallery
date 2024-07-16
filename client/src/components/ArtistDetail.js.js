@@ -1,29 +1,56 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Navbar from './Navbar';
 import './ArtistDetail.css'; // Import CSS file for additional styling
+import { useFormik } from 'formik';
 
 const ArtistDetail = ({ match }) => {
     const [artist, setArtist] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const fetchArtist = async (artistId) => {
+        try {
+            const response = await fetch(`http://127.0.0.1:5555/artists/${artistId}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch');
+            }
+            const data = await response.json();
+            setArtist(data);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching artist:', error);
+            setError('Error fetching artist details. Please try again later.');
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchArtist = async () => {
-            const artistId = match.params.id; // Get artist ID from URL params
+        const artistId = match.params.id; // Get artist ID from URL params
+        fetchArtist(artistId);
+    }, [match.params.id]);
+
+    const formik = useFormik({
+        initialValues: {
+            id: ''
+        },
+        onSubmit: async (values, { setSubmitting }) => {
             try {
-                const response = await axios.get(`http://127.0.0.1:5555/artists/${artistId}`);
-                setArtist(response.data);
+                const response = await fetch(`http://127.0.0.1:5555/artists/${values.id}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch');
+                }
+                const data = await response.json();
+                setArtist(data);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching artist:', error);
                 setError('Error fetching artist details. Please try again later.');
                 setLoading(false);
+            } finally {
+                setSubmitting(false);
             }
-        };
-
-        fetchArtist();
-    }, [match.params.id]);
+        },
+    });
 
     if (loading) return <div className="loading">Loading...</div>;
     if (error) return <div className="error">Error: {error}</div>;

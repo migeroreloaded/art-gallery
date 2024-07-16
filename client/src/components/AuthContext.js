@@ -1,7 +1,4 @@
-// AuthContext.js
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
 
 const AuthContext = createContext();
 
@@ -23,10 +20,19 @@ export const AuthProvider = ({ children }) => {
   // Function to log in user
   const login = async (formData) => {
     try {
-      const response = await axios.post('http://localhost:5555/login', formData);
-      if (response.data.message === 'Login successful') {
-        const token = response.data.access_token;
-        const user = response.data.user; // Assuming your backend sends back user data
+      const response = await fetch('http://localhost:5555/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (data.message === 'Login successful') {
+        const token = data.access_token;
+        const user = data.user; // Assuming your backend sends back user data
 
         setAuthToken(token);
         setUserData(user);
@@ -39,7 +45,7 @@ export const AuthProvider = ({ children }) => {
 
         return { success: true, role: user.role };
       } else {
-        return { success: false, message: response.data.message || 'Login failed' };
+        return { success: false, message: data.message || 'Login failed' };
       }
     } catch (err) {
       console.error('Login error:', err);
