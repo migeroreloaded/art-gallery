@@ -1,4 +1,10 @@
 # Art Gallery Project
+## Contributors
+Brimin KIpkorir
+Elvis Moses
+Paul Saitabau
+Brenda Cheptoo
+Michael George
 
 # The Problem
 You need an art gallery application with a user-friendly interface where users can view, search, and manage artworks and artists. Additionally, the application should allow users to mark their favorite artworks, and administrators should have full control over CRUD operations for artists, artworks, and exhibitions. The application should be accessible and follow best practices for web development.
@@ -133,6 +139,7 @@ style (string)
 price (decimal)
 available (boolean)
 artist_id (int, foreign key referencing Artist.id)
+Image (string)
 
 ## Exhibition
 
