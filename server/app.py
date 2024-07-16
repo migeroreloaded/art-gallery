@@ -33,8 +33,29 @@ def register():
     hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
 
     user = User(email=data['email'], password=hashed_password, role=role)
+    
     db.session.add(user)
     db.session.commit()
+
+    if role == 'artist':
+            try:
+                birthdate = datetime.strptime(data['birthdate'], '%Y-%m-%d').date()
+            except ValueError:
+                return jsonify({'message': 'Invalid birthdate format. Use YYYY-MM-DD.'}), 400
+
+            artist = Artist(
+                name=data['name'],
+                biography=data['biography'],
+                birthdate=birthdate,
+                nationality=data['nationality'],
+                image=data.get('image', ''), 
+                user_id=user.id
+            )
+
+            db.session.add(artist)
+            db.session.commit()
+
+            return jsonify({'message': 'User created successfully'})
 
     return jsonify({'message': 'User created successfully'})
 
