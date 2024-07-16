@@ -1,6 +1,54 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useHistory } from 'react-router-dom'; // Assuming React Router is used for navigation
+import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+
+const Form = styled.form`
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const FormInput = styled.input`
+  width: calc(100% - 22px);
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
+
+const FormTextarea = styled.textarea`
+  width: calc(100% - 22px);
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
+
+const FormError = styled.div`
+  color: red;
+  text-align: center;
+  margin-top: 10px;
+`;
+
+const SubmitButton = styled.button`
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #ff416c;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: #ff4a6f;
+  }
+`;
 
 const CreateEvent = ({ onSuccess }) => {
   const [name, setName] = useState('');
@@ -15,7 +63,7 @@ const CreateEvent = ({ onSuccess }) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://127.0.0.1:5555/exhibitions', {
+      const response = await axios.post('http://localhost:5555/exhibitions', {
         name,
         description,
         start_date: startDate,
@@ -26,8 +74,10 @@ const CreateEvent = ({ onSuccess }) => {
         }
       });
 
-      onSuccess(response.data); // Notify parent component (ExhibitionsPage) about the new event
-      history.push('/exhibitions'); // Redirect to exhibitions page after successful creation
+      onSuccess(response.data);
+      history.push('/exhibitions');
+
+      setError('');
     } catch (error) {
       console.error('Error creating event:', error);
       setError('Error creating event. Please try again later.');
@@ -35,14 +85,14 @@ const CreateEvent = ({ onSuccess }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Event Name" required />
-      <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Event Description" required />
-      <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
-      <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} required />
-      <button type="submit">Create Event</button>
-      {error && <div>{error}</div>}
-    </form>
+    <Form onSubmit={handleSubmit}>
+      <FormInput type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Event Name" required />
+      <FormTextarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Event Description" required />
+      <FormInput type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} required />
+      <FormInput type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} required />
+      <SubmitButton type="submit">Create Event</SubmitButton>
+      {error && <FormError>{error}</FormError>}
+    </Form>
   );
 };
 

@@ -1,6 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useHistory } from 'react-router-dom'; // Assuming React Router is used for navigation
+import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+
+const Form = styled.form`
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const FormInput = styled.input`
+  width: calc(100% - 22px);
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
+
+const FormTextarea = styled.textarea`
+  width: calc(100% - 22px);
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
+
+const FormError = styled.div`
+  color: red;
+  text-align: center;
+  margin-top: 10px;
+`;
+
+const SubmitButton = styled.button`
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #ff416c;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: #ff4a6f;
+  }
+`;
 
 const UpdateEvent = ({ eventId, onSuccess }) => {
   const [name, setName] = useState('');
@@ -56,10 +104,10 @@ const UpdateEvent = ({ eventId, onSuccess }) => {
   return (
     <div>
       <h2>Update Event</h2>
-      <form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="name">Name:</label>
-          <input
+          <FormInput
             type="text"
             id="name"
             value={name}
@@ -69,7 +117,7 @@ const UpdateEvent = ({ eventId, onSuccess }) => {
         </div>
         <div>
           <label htmlFor="startDate">Start Date:</label>
-          <input
+          <FormInput
             type="date"
             id="startDate"
             value={startDate}
@@ -79,7 +127,7 @@ const UpdateEvent = ({ eventId, onSuccess }) => {
         </div>
         <div>
           <label htmlFor="endDate">End Date:</label>
-          <input
+          <FormInput
             type="date"
             id="endDate"
             value={endDate}
@@ -89,16 +137,16 @@ const UpdateEvent = ({ eventId, onSuccess }) => {
         </div>
         <div>
           <label htmlFor="description">Description:</label>
-          <textarea
+          <FormTextarea
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
           />
         </div>
-        <button type="submit">Update Event</button>
-        {error && <div>{error}</div>}
-      </form>
+        <SubmitButton type="submit">Update Event</SubmitButton>
+        {error && <FormError>{error}</FormError>}
+      </Form>
     </div>
   );
 };

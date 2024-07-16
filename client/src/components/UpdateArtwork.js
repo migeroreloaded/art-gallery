@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { UpdateButton } from './styles';  // Ensure UpdateButton is imported from styles
 
 const UpdateArtwork = ({ artworkId, onUpdate }) => {
   const [title, setTitle] = useState('');
@@ -57,56 +56,114 @@ const UpdateArtwork = ({ artworkId, onUpdate }) => {
     }
   };
 
+  const containerStyle = {
+    maxWidth: '600px',
+    margin: '0 auto',
+    padding: '20px',
+    backgroundColor: '#fff',
+    border: '1px solid #ddd',
+    borderRadius: '5px',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  };
+
+  const formStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+  };
+
+  const inputStyle = {
+    width: '100%',
+    padding: '10px',
+    fontSize: '1rem',
+    border: '1px solid #ccc',
+    borderRadius: '3px',
+    outline: 'none',
+    transition: 'border-color 0.3s ease',
+    marginTop: '5px',
+    ':focus': {
+      borderColor: '#4caf50',
+    }
+  };
+
+  const labelStyle = {
+    fontWeight: 'bold',
+    marginBottom: '5px',
+  };
+
+  const buttonStyle = {
+    padding: '12px 20px',
+    fontSize: '1rem',
+    backgroundColor: '#4caf50',
+    color: 'white',
+    border: 'none',
+    borderRadius: '3px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease',
+    marginTop: '10px',
+    ':hover': {
+      backgroundColor: '#45a049',
+    }
+  };
+
+  const errorStyle = {
+    color: 'red',
+    marginTop: '10px',
+  };
+
   return (
-    <div>
+    <div style={containerStyle}>
       <h2>Update Artwork</h2>
-      {error && <p>{error}</p>}
-      <form onSubmit={handleSubmit}>
+      {error && <p style={errorStyle}>{error}</p>}
+      <form style={formStyle} onSubmit={handleSubmit}>
         <div>
-          <label>Title:</label>
+          <label style={labelStyle}>Title:</label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            style={inputStyle}
             required
           />
         </div>
         <div>
-          <label>Medium:</label>
+          <label style={labelStyle}>Medium:</label>
           <input
             type="text"
             value={medium}
             onChange={(e) => setMedium(e.target.value)}
+            style={inputStyle}
             required
           />
         </div>
         <div>
-          <label>Style:</label>
+          <label style={labelStyle}>Style:</label>
           <input
             type="text"
             value={style}
             onChange={(e) => setStyle(e.target.value)}
+            style={inputStyle}
             required
           />
         </div>
         <div>
-          <label>Price:</label>
+          <label style={labelStyle}>Price:</label>
           <input
             type="number"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
+            style={inputStyle}
             required
           />
         </div>
         <div>
-          <label>Available:</label>
+          <label style={labelStyle}>Available:</label>
           <input
             type="checkbox"
             checked={available}
             onChange={(e) => setAvailable(e.target.checked)}
           />
         </div>
-        <UpdateButton type="submit">Update Artwork</UpdateButton>
+        <button type="submit" style={buttonStyle}>Update Artwork</button>
       </form>
     </div>
   );
