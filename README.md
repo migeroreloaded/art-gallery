@@ -7,10 +7,13 @@ Brenda Cheptoo
 Michael George
 
 # The Problem
-You need an art gallery application with a user-friendly interface where users can view, search, and manage artworks and artists. Additionally, the application should allow users to mark their favorite artworks, and administrators should have full control over CRUD operations for artists, artworks, and exhibitions. The application should be accessible and follow best practices for web development.
+Artists often struggle with an effective way to present their portfolios online, limiting their exposure and reach to potential buyers and art enthusiasts. 
+Additionally, artists face significant challenges in managing and promoting their events. Existing tools are either too fragmented or not tailored to the unique needs of artists, making it difficult to organize exhibitions and engage with their audience efficiently.
+
 
 # Solution
-This project provides a solution by combining a Flask backend with a React frontend. It ensures a seamless and interactive experience for both users and administrators, with a focus on accessibility and responsiveness. The backend handles database operations using SQLAlchemy with an SQLite database, while the frontend provides a dynamic and intuitive interface.
+This project provides a comprehensive, user-friendly platform that enhances visibility for artists' work and streamlines event management.
+It provides a solution by combining a Flask backend with a React frontend and ensures a seamless and interactive experience for both users and artists, with a focus on accessibility and responsiveness. The backend handles database operations using SQLAlchemy with an SQLite database, while the frontend provides a dynamic and intuitive interface.
 
 # Table of Contents
 1.The Problem
