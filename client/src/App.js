@@ -24,7 +24,7 @@ function App() {
           <Route path="/register" component={RegisterPage} />
           <Route path="/management" component={ManagementPage} />
           {/* Routes that require authentication */}
-          <PrivateRoute path="/dashboard" component={Dashboard} />
+          <Route path="/dashboard" component={Dashboard} />
           <PrivateRoute path="/user-dashboard" component={UserDashboard} />
           {/* Public routes */}
           <Route path="/artworks" component={Artwork} />

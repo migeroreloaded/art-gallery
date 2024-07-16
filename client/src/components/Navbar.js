@@ -27,10 +27,10 @@ const Navbar = () => {
             roleLinks = (
                 <>
                     <li className="nav-item">
-                        <Link to="/my-artists" className="nav-link">My Artists</Link>
+                        <Link to="/my-artworks" className="nav-link">My Artworks</Link>
                     </li>
                     <li className="nav-item">
-                        <Link to="/manage-artworks" className="nav-link">Manage Artworks</Link>
+                        <Link to="/my-exhibitions" className="nav-link">My Exhibitions</Link>
                     </li>
                     {/* Add more artist-specific links */}
                 </>
@@ -39,7 +39,7 @@ const Navbar = () => {
             roleLinks = (
                 <>
                     <li className="nav-item">
-                        <Link to="/explore-artworks" className="nav-link">Explore Artworks</Link>
+                        <Link to="/favourite-artworks" className="nav-link">Favourite Artworks</Link>
                     </li>
                     <li className="nav-item">
                         <Link to="/favorite-artists" className="nav-link">Favorite Artists</Link>
@@ -69,9 +69,14 @@ const Navbar = () => {
                     </li>
                     {roleLinks} {/* Render role-specific links */}
                     {isAuthenticated() ? (
-                        <li className="nav-item">
-                            <button className="nav-link" onClick={handleLogout}>Logout</button>
-                        </li>
+                        <>
+                            <li className="nav-item">
+                                <Link to="/dashboard" className="nav-link">My Account</Link>
+                            </li>,
+                            <li className="nav-item">
+                                <button className="nav-link" onClick={handleLogout}>Logout</button>
+                            </li>
+                        </>
                     ) : (
                         <li className="nav-item">
                             <Link to="/login" className="nav-link">Login</Link>
