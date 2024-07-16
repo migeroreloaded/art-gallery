@@ -498,6 +498,5 @@ def seed():
         db.session.commit()
 
         print("Database seeded!")
-
 if __name__ == '__main__':
     seed()

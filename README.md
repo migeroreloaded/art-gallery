@@ -13,7 +13,8 @@ Additionally, artists face significant challenges in managing and promoting thei
 
 # Solution
 This project provides a comprehensive, user-friendly platform that enhances visibility for artists' work and streamlines event management.
-It provides a solution by combining a Flask backend with a React frontend and ensures a seamless and interactive experience for both users and artists, with a focus on accessibility and responsiveness. The backend handles database operations using SQLAlchemy with an SQLite database, while the frontend provides a dynamic and intuitive interface.
+It provides a solution by combining a Flask backend with a React frontend and ensures a seamless and interactive experience for both users and artists, with a focus on accessibility and responsiveness. 
+The backend handles database operations using SQLAlchemy with an SQLite database, while the frontend provides a dynamic and intuitive interface.
 
 # Table of Contents
 1.The Problem
