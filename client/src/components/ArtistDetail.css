@@ -22,15 +22,21 @@
 }
 
 .artist-name {
-    font-size: 2rem;
-    color: #333;
+    font-size: 2rem; /* Increase font size for prominence */
+    font-weight: bold; /* Add bold for emphasis */
+    color: #163d04; /* Dark color for good contrast */
+    margin-bottom: 10px; /* Add margin bottom for spacing */
+    text-transform: capitalize; /* Capitalize the text */
+    text-align: center; /* Center-align the text */
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2); /* Add subtle text shadow */
 }
 
 .artist-image {
-    max-width: 100%;
+    max-width: 200%;
     height: auto;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    float: right;
 }
 
 .artist-info {
