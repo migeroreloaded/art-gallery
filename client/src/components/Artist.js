@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
 import {
-    ArtistGrid,
+    // ArtistGrid,
     ArtistContainer,
     ArtistHeading,
     ArtistName,
@@ -10,7 +10,8 @@ import {
     ArtistImage,
     ArtistLoading,
     ErrorMessage,
-    DeleteButton // Add DeleteButton
+    DeleteButton,
+    ArtworkGrid // Add DeleteButton
 } from './styles';
 
 const Artist = () => {
@@ -59,7 +60,7 @@ const Artist = () => {
             ) : error ? (
                 <ErrorMessage>{error}</ErrorMessage>
             ) : (
-                <ArtistGrid>
+                <ArtworkGrid>
                     {artists.map(artist => (
                         <ArtistContainer key={artist.id}>
                             <Link to={`/artists/${artist.id}`}>
@@ -70,7 +71,7 @@ const Artist = () => {
                             <DeleteButton onClick={() => handleDelete(artist.id)}>Delete</DeleteButton>
                         </ArtistContainer>
                     ))}
-                </ArtistGrid>
+                </ArtworkGrid>
             )}
         </div>
     );

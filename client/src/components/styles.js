@@ -350,6 +350,9 @@ export const ArtistContainer = styled.div`
 export const ArtistName = styled.h3`
   font-size: 1.5rem;
   margin-bottom: 10px;
+  text-decoration: none; /* Remove underline */
+  color: inherit; /* Inherit the color from parent */
+  cursor: default; /* Use default cursor to indicate non-interactivity */
 `;
 
 export const ArtistBio = styled.p`
