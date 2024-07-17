@@ -16,7 +16,7 @@ const ManagementContainer = styled.div`
 const ManagementPage = () => {
   return (
     <div>
-      <h1>Management Page</h1>
+      <h1>Art Management</h1>
       <Navbar />
       <ManagementContainer>
         <AddArtwork />

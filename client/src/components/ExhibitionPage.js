@@ -148,9 +148,11 @@ const ExhibitionsPage = () => {
     return <div>{error}</div>;
   }
 
-  return (
+  return (<>
+
     <PageContainer>
-      <Navbar />
+    <Navbar />
+
       <Header>
         <h1>Exhibitions</h1>
         {isAuthenticated() && userData.role === 'artist' && (
@@ -219,6 +221,7 @@ const ExhibitionsPage = () => {
         <p>Contact us | About | Terms of Service</p>
       </Footer>
     </PageContainer>
+    </>
   );
 };
 

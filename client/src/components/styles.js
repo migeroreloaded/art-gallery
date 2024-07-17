@@ -273,13 +273,15 @@ export const PageContainer = styled.div`
   background-color: #f5f5f5;
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
   border-radius: 10px;
+  width: 100%;
 `;
 
 export const Header = styled.header`
   text-align: center;
   padding: 20px;
-  background-color: #ff416c;
-  color: #fff;
+  background-color: #fffff;
+  
+  color: black;
   border-radius: 10px;
 `;
 export const ExhibitionHighlights = styled.div`
