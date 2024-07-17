@@ -1,30 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
-const Card = styled.div`
-  width: 80%;
+const Form = styled.form`
+  max-width: 600px;
+  margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
   background-color: #f9f9f9;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px; // Add this line
-`;
-
-const Form = styled.form`
-  padding: 20px;
-`;
-
-const FormTitle = styled.h2`
-  text-align: center;
-  margin-bottom: 20px;
-`;
-
-const FormError = styled.p`
-  color: red;
-  text-align: center;
 `;
 
 const FormInput = styled.input`
@@ -35,14 +21,18 @@ const FormInput = styled.input`
   border-radius: 5px;
 `;
 
-const FormCheckbox = styled.label`
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
+const FormTextarea = styled.textarea`
+  width: calc(100% - 22px);
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
 
-  input {
-    margin-left: 10px;
-  }
+const FormError = styled.div`
+  color: red;
+  text-align: center;
+  margin-top: 10px;
 `;
 
 const SubmitButton = styled.button`
@@ -60,63 +50,121 @@ const SubmitButton = styled.button`
   }
 `;
 
-const UpdateEvent = ({ onSuccess }) => {
+const UpdateEvent = ({ eventId, onSuccess }) => {
+  const [error, setError] = useState('');
   const history = useHistory();
+
+  useEffect(() => {
+    // Fetch existing event details for the given eventId
+    const fetchEventDetails = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:5555/exhibitions/${eventId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch');
+        }
+        const eventData = await response.json();
+        formik.setValues({
+          name: eventData.name,
+          description: eventData.description,
+          startDate: eventData.start_date,
+          endDate: eventData.end_date
+        });
+      } catch (error) {
+        console.error('Error fetching event details:', error);
+        setError('Error fetching event details. Please try again later.');
+      }
+    };
+
+    fetchEventDetails();
+  }, [eventId]); // Fetch details when the component mounts or eventId changes
 
   const formik = useFormik({
     initialValues: {
-      id: '',
       name: '',
-      date: '',
-      location: '',
       description: '',
-      imageURL: '',
-      isPublic: true,
+      startDate: '',
+      endDate: ''
     },
-    onSubmit: async (values, { setSubmitting, setErrors }) => {
+    onSubmit: async (values) => {
       try {
-        const response = await fetch(`http://localhost:5555/events/${values.id}`, {
+        const response = await fetch(`http://127.0.0.1:5555/exhibitions/${eventId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('authToken')}`
           },
-          body: JSON.stringify(values),
+          body: JSON.stringify({
+            name: values.name,
+            description: values.description,
+            start_date: values.startDate,
+            end_date: values.endDate
+          }),
         });
 
         if (!response.ok) {
-          throw new Error('Error updating event');
+          throw new Error('Failed to update');
         }
 
-        const data = await response.json();
-        onSuccess(data);
-        history.push('/events');
+        onSuccess(); // Notify parent component (ExhibitionsPage) about the update
+        history.push('/exhibitions'); // Redirect to exhibitions page after successful update
       } catch (error) {
-        setErrors({ submit: error.message });
-      } finally {
-        setSubmitting(false);
+        console.error('Error updating event:', error);
+        setError('Error updating event. Please try again later.');
       }
     },
   });
 
   return (
-    <Card>
+    <div>
+      <h2>Update Event</h2>
       <Form onSubmit={formik.handleSubmit}>
-        <FormTitle>Update Event</FormTitle>
-        {formik.errors.submit && <FormError>{formik.errors.submit}</FormError>}
-        <FormInput type="text" name="id" placeholder="Event ID" value={formik.values.id} onChange={formik.handleChange} required />
-        <FormInput type="text" name="name" placeholder="Name" value={formik.values.name} onChange={formik.handleChange} required />
-        <FormInput type="date" name="date" placeholder="Date" value={formik.values.date} onChange={formik.handleChange} required />
-        <FormInput type="text" name="location" placeholder="Location" value={formik.values.location} onChange={formik.handleChange} required />
-        <FormInput type="text" name="description" placeholder="Description" value={formik.values.description} onChange={formik.handleChange} required />
-        <FormInput type="text" name="imageURL" placeholder="Image URL" value={formik.values.imageURL} onChange={formik.handleChange} required />
-        <FormCheckbox>
-          Public:
-          <input type="checkbox" name="isPublic" checked={formik.values.isPublic} onChange={formik.handleChange} />
-        </FormCheckbox>
-        <SubmitButton type="submit" disabled={formik.isSubmitting}>Update Event</SubmitButton>
+        <div>
+          <label htmlFor="name">Name:</label>
+          <FormInput
+            type="text"
+            id="name"
+            name="name"
+            value={formik.values.name}
+            onChange={formik.handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="startDate">Start Date:</label>
+          <FormInput
+            type="date"
+            id="startDate"
+            name="startDate"
+            value={formik.values.startDate}
+            onChange={formik.handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="endDate">End Date:</label>
+          <FormInput
+            type="date"
+            id="endDate"
+            name="endDate"
+            value={formik.values.endDate}
+            onChange={formik.handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="description">Description:</label>
+          <FormTextarea
+            id="description"
+            name="description"
+            value={formik.values.description}
+            onChange={formik.handleChange}
+            required
+          />
+        </div>
+        <SubmitButton type="submit">Update Event</SubmitButton>
+        {error && <FormError>{error}</FormError>}
       </Form>
-    </Card>
+    </div>
   );
 };
 

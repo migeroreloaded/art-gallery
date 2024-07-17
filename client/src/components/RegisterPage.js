@@ -19,6 +19,7 @@ import { Link } from 'react-router-dom';
 
 const RegisterForm = () => {
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const formik = useFormik({
     initialValues: {
@@ -70,14 +71,18 @@ const RegisterForm = () => {
         const data = await response.json();
 
         if (response.ok) {
+          setSuccessMessage('User signed up successfully');
+          setError('');
           console.log(data);
           // Handle successful registration (e.g., redirect or set token)
         } else {
+          setSuccessMessage('');
           setError(data.message || 'Registration failed');
         }
       } catch (err) {
         console.error('Error during sign up:', err);
         setError('An error occurred during sign up. Please try again later.');
+        setSuccessMessage('');
       }
     }
   });
@@ -88,6 +93,7 @@ const RegisterForm = () => {
         <Form onSubmit={formik.handleSubmit}>
           <Title>Create Account</Title>
           {error && <p style={{ color: 'red' }}>{error}</p>}
+          {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
           <label htmlFor="role">Role:</label><br />
           <Select
             id="role"

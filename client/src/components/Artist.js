@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
+import { useAuth } from './AuthContext';
 import {
-    // ArtistGrid,
+    ArtistGrid,
     ArtistContainer,
     ArtistHeading,
     ArtistName,
@@ -10,14 +11,14 @@ import {
     ArtistImage,
     ArtistLoading,
     ErrorMessage,
-    DeleteButton,
-    ArtworkGrid // Add DeleteButton
+    DeleteButton // Add DeleteButton
 } from './styles';
 
 const Artist = () => {
     const [artists, setArtists] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { isAuthenticated, userData } = useAuth();
 
     useEffect(() => {
         const fetchArtists = async () => {
@@ -60,7 +61,7 @@ const Artist = () => {
             ) : error ? (
                 <ErrorMessage>{error}</ErrorMessage>
             ) : (
-                <ArtworkGrid>
+                <ArtistGrid>
                     {artists.map(artist => (
                         <ArtistContainer key={artist.id}>
                             <Link to={`/artists/${artist.id}`}>
@@ -68,10 +69,12 @@ const Artist = () => {
                             </Link>
                             <ArtistBio>{artist.bio}</ArtistBio>
                             <ArtistImage src={artist.image} alt={artist.name} />
-                            <DeleteButton onClick={() => handleDelete(artist.id)}>Delete</DeleteButton>
+                            {isAuthenticated() && userData.role === 'artist' && artist.user_id === userData.artist.user_id && (
+                              <DeleteButton onClick={() => handleDelete(artist.id)}>Delete</DeleteButton>
+                            )}
                         </ArtistContainer>
                     ))}
-                </ArtworkGrid>
+                </ArtistGrid>
             )}
         </div>
     );

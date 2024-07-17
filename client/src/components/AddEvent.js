@@ -3,30 +3,14 @@ import { useFormik } from 'formik';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
-const Card = styled.div`
-  width: 80%;
+const Form = styled.form`
+  max-width: 600px;
+  margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
   background-color: #f9f9f9;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px; // Add this line
-
-
-`;
-
-const Form = styled.form`
-  padding: 20px;
-`;
-
-const FormTitle = styled.h2`
-  text-align: center;
-  margin-bottom: 20px;
-`;
-
-const FormError = styled.p`
-  color: red;
-  text-align: center;
 `;
 
 const FormInput = styled.input`
@@ -37,14 +21,18 @@ const FormInput = styled.input`
   border-radius: 5px;
 `;
 
-const FormCheckbox = styled.label`
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
+const FormTextarea = styled.textarea`
+  width: calc(100% - 22px);
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
 
-  input {
-    margin-left: 10px;
-  }
+const FormError = styled.div`
+  color: red;
+  text-align: center;
+  margin-top: 10px;
 `;
 
 const SubmitButton = styled.button`
@@ -62,38 +50,42 @@ const SubmitButton = styled.button`
   }
 `;
 
-const AddEvent = ({ onSuccess }) => {
+const CreateEvent = ({ onSuccess }) => {
   const history = useHistory();
 
   const formik = useFormik({
     initialValues: {
       name: '',
-      date: '',
-      location: '',
       description: '',
-      imageURL: '',
-      isPublic: true,
+      startDate: '',
+      endDate: ''
     },
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       try {
-        const response = await fetch('http://localhost:5555/events', {
+        const response = await fetch('http://localhost:5555/exhibitions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('authToken')}`
           },
-          body: JSON.stringify(values),
+          body: JSON.stringify({
+            name: values.name,
+            description: values.description,
+            start_date: values.startDate,
+            end_date: values.endDate
+          }),
         });
 
         if (!response.ok) {
-          throw new Error('Error adding event');
+          throw new Error('Error creating event');
         }
 
         const data = await response.json();
         onSuccess(data);
-        history.push('/events');
+        history.push('/exhibitions');
       } catch (error) {
-        setErrors({ submit: error.message });
+        console.error('Error creating event:', error);
+        setErrors({ submit: 'Error creating event. Please try again later.' });
       } finally {
         setSubmitting(false);
       }
@@ -101,23 +93,40 @@ const AddEvent = ({ onSuccess }) => {
   });
 
   return (
-    <Card>
-      <Form onSubmit={formik.handleSubmit}>
-        <FormTitle>Add Event</FormTitle>
-        {formik.errors.submit && <FormError>{formik.errors.submit}</FormError>}
-        <FormInput type="text" name="name" placeholder="Name" value={formik.values.name} onChange={formik.handleChange} required />
-        <FormInput type="date" name="date" placeholder="Date" value={formik.values.date} onChange={formik.handleChange} required />
-        <FormInput type="text" name="location" placeholder="Location" value={formik.values.location} onChange={formik.handleChange} required />
-        <FormInput type="text" name="description" placeholder="Description" value={formik.values.description} onChange={formik.handleChange} required />
-        <FormInput type="text" name="imageURL" placeholder="Image URL" value={formik.values.imageURL} onChange={formik.handleChange} required />
-        <FormCheckbox>
-          Public:
-          <input type="checkbox" name="isPublic" checked={formik.values.isPublic} onChange={formik.handleChange} />
-        </FormCheckbox>
-        <SubmitButton type="submit" disabled={formik.isSubmitting}>Add Event</SubmitButton>
-      </Form>
-    </Card>
+    <Form onSubmit={formik.handleSubmit}>
+      <FormInput
+        type="text"
+        name="name"
+        value={formik.values.name}
+        onChange={formik.handleChange}
+        placeholder="Event Name"
+        required
+      />
+      <FormTextarea
+        name="description"
+        value={formik.values.description}
+        onChange={formik.handleChange}
+        placeholder="Event Description"
+        required
+      />
+      <FormInput
+        type="date"
+        name="startDate"
+        value={formik.values.startDate}
+        onChange={formik.handleChange}
+        required
+      />
+      <FormInput
+        type="date"
+        name="endDate"
+        value={formik.values.endDate}
+        onChange={formik.handleChange}
+        required
+      />
+      <SubmitButton type="submit" disabled={formik.isSubmitting}>Create Event</SubmitButton>
+      {formik.errors.submit && <FormError>{formik.errors.submit}</FormError>}
+    </Form>
   );
 };
 
-export default AddEvent;
+export default CreateEvent;

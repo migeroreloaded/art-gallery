@@ -148,11 +148,9 @@ const ExhibitionsPage = () => {
     return <div>{error}</div>;
   }
 
-  return (<>
-
+  return (
     <PageContainer>
-    <Navbar />
-
+      <Navbar />
       <Header>
         <h1>Exhibitions</h1>
         {isAuthenticated() && userData.role === 'artist' && (
@@ -219,9 +217,10 @@ const ExhibitionsPage = () => {
 
       <Footer>
         <p>Contact us | About | Terms of Service</p>
+        <p>Phone number: +25495785281</p>
+        <p>Email : infoatartgalery@gmail.com</p>
       </Footer>
     </PageContainer>
-    </>
   );
 };
 

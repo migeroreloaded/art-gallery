@@ -26,24 +26,24 @@ const Navbar = () => {
         if (role === 'artist') {
             roleLinks = (
                 <>
-                    <li className="nav-item">
+                    {/* <li className="nav-item">
                         <Link to="/my-artworks" className="nav-link">My Artworks</Link>
                     </li>
                     <li className="nav-item">
                         <Link to="/my-exhibitions" className="nav-link">My Exhibitions</Link>
-                    </li>
+                    </li> */}
                     {/* Add more artist-specific links */}
                 </>
             );
         } else if (role === 'art enthusiast') {
             roleLinks = (
                 <>
-                    <li className="nav-item">
+                    {/* <li className="nav-item">
                         <Link to="/favourite-artworks" className="nav-link">Favourite Artworks</Link>
                     </li>
                     <li className="nav-item">
                         <Link to="/favorite-artists" className="nav-link">Favorite Artists</Link>
-                    </li>
+                    </li> */}
                     {/* Add more art enthusiast-specific links */}
                 </>
             );
@@ -70,9 +70,9 @@ const Navbar = () => {
                     {roleLinks} {/* Render role-specific links */}
                     {isAuthenticated() ? (
                         <>
-                            <li className="nav-item">
+                            {/* <li className="nav-item">
                                 <Link to="/dashboard" className="nav-link">My Account</Link>
-                            </li>
+                            </li> */}
                             <li className="nav-item">
                                 <button className="nav-link" onClick={handleLogout}>Logout</button>
                             </li>

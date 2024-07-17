@@ -3,18 +3,14 @@ import { useFormik } from 'formik';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
-const Card = styled.div`
-  width: 80%;
-
+const Form = styled.form`
+  max-width: 600px;
+  margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
   background-color: #f9f9f9;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px; // Add this line
-`;
-const Form = styled.form`
-  padding: 20px;
 `;
 
 const FormTitle = styled.h2`
@@ -99,22 +95,20 @@ const AddArtwork = ({ onSuccess }) => {
   });
 
   return (
-    <Card>
-      <Form onSubmit={formik.handleSubmit}>
-        <FormTitle>Add Artwork</FormTitle>
-        {formik.errors.submit && <FormError>{formik.errors.submit}</FormError>}
-        <FormInput type="text" name="title" placeholder="Title" value={formik.values.title} onChange={formik.handleChange} required />
-        <FormInput type="text" name="medium" placeholder="Medium" value={formik.values.medium} onChange={formik.handleChange} required />
-        <FormInput type="text" name="style" placeholder="Style" value={formik.values.style} onChange={formik.handleChange} required />
-        <FormInput type="number" name="price" placeholder="Price" value={formik.values.price} onChange={formik.handleChange} required />
-        <FormInput type="text" name="imageURL" placeholder="Image URL" value={formik.values.imageURL} onChange={formik.handleChange} required />
-        <FormCheckbox>
-          Available:
-          <input type="checkbox" name="available" checked={formik.values.available} onChange={formik.handleChange} />
-        </FormCheckbox>
-        <SubmitButton type="submit" disabled={formik.isSubmitting}>Add Artwork</SubmitButton>
-      </Form>
-    </Card>
+    <Form onSubmit={formik.handleSubmit}>
+      <FormTitle>Add Artwork</FormTitle>
+      {formik.errors.submit && <FormError>{formik.errors.submit}</FormError>}
+      <FormInput type="text" name="title" placeholder="Title" value={formik.values.title} onChange={formik.handleChange} required />
+      <FormInput type="text" name="medium" placeholder="Medium" value={formik.values.medium} onChange={formik.handleChange} required />
+      <FormInput type="text" name="style" placeholder="Style" value={formik.values.style} onChange={formik.handleChange} required />
+      <FormInput type="number" name="price" placeholder="Price" value={formik.values.price} onChange={formik.handleChange} required />
+      <FormInput type="text" name="imageURL" placeholder="Image URL" value={formik.values.imageURL} onChange={formik.handleChange} required />
+      <FormCheckbox>
+        Available:
+        <input type="checkbox" name="available" checked={formik.values.available} onChange={formik.handleChange} />
+      </FormCheckbox>
+      <SubmitButton type="submit" disabled={formik.isSubmitting}>Add Artwork</SubmitButton>
+    </Form>
   );
 };
 

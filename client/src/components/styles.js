@@ -273,15 +273,13 @@ export const PageContainer = styled.div`
   background-color: #f5f5f5;
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
   border-radius: 10px;
-  width: 100%;
 `;
 
 export const Header = styled.header`
   text-align: center;
   padding: 20px;
-  background-color: #fffff;
-  
-  color: black;
+  background-color: #ff416c;
+  color: #fff;
   border-radius: 10px;
 `;
 export const ExhibitionHighlights = styled.div`
@@ -350,9 +348,6 @@ export const ArtistContainer = styled.div`
 export const ArtistName = styled.h3`
   font-size: 1.5rem;
   margin-bottom: 10px;
-  text-decoration: none; /* Remove underline */
-  color: inherit; /* Inherit the color from parent */
-  cursor: default; /* Use default cursor to indicate non-interactivity */
 `;
 
 export const ArtistBio = styled.p`
