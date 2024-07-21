@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
-import WelcomePage from './components/Welcomepage';
+// import WelcomePage from './components/Welcomepage';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import ArtistDetail from './components/ArtistDetail.js';
@@ -19,7 +19,7 @@ function App() {
       <Router>
        {/*<Navbar />*/}
         <Switch>
-          <Route path="/" exact component={WelcomePage} />
+          <Route path="/" exact component={Artwork} />
           <Route path="/login" component={LoginPage} />
           <Route path="/register" component={RegisterPage} />
           <Route path="/management" component={ManagementPage} />
