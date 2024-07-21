@@ -23,7 +23,7 @@ const Artist = () => {
     useEffect(() => {
         const fetchArtists = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:5555/artists');
+                const response = await fetch('https://art-gallery-imr2.onrender.com/artists');
                 if (!response.ok) {
                     throw new Error('Failed to fetch');
                 }
@@ -42,7 +42,7 @@ const Artist = () => {
 
     const handleDelete = async (id) => {
         try {
-            await fetch(`http://127.0.0.1:5555/artists/${id}`, {
+            await fetch(`https://art-gallery-imr2.onrender.com/artists/${id}`, {
                 method: 'DELETE'
             });
             setArtists(artists.filter(artist => artist.id !== id));

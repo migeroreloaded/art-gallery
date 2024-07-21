@@ -38,7 +38,7 @@ const Dashboard = () => {
 
     const handleUpdateProfile = async (values) => {
         try {
-            const response = await fetch('http://127.0.0.1:5555/artists', {
+            const response = await fetch('https://art-gallery-imr2.onrender.com/artists', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

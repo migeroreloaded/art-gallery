@@ -15,12 +15,12 @@ export const AuthProvider = ({ children }) => {
       setUserData(user);
     }
     console.log('Auth Token in useEffect:', authToken); // Log authToken in useEffect
-  }, []);
+  }, [authToken]);
 
   // Function to log in user
   const login = async (formData) => {
     try {
-      const response = await fetch('http://localhost:5555/login', {
+      const response = await fetch('https://art-gallery-imr2.onrender.com/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -3,7 +3,7 @@ import React from 'react';
 const DeleteArtwork = ({ artworkId, onDelete }) => {
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:5555/artworks/${artworkId}`, {
+      const response = await fetch(`https://art-gallery-imr2.onrender.com/artworks/${artworkId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`

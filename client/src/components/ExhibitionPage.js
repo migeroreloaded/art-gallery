@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from './Navbar';
-import CreateEvent from './AddEvent'; // Assuming this is your component for adding exhibitions
+// import CreateEvent from './AddEvent'; // Assuming this is your component for adding exhibitions
 import UpdateEvent from './UpdateEvent';
 import { PageContainer, Header, ExhibitionList, ExhibitionCard, ExhibitionTitle, ExhibitionDescription, Footer, DeleteButton } from './styles';
 import { useAuth } from './AuthContext';
@@ -22,7 +22,7 @@ const ExhibitionsPage = () => {
     },
     onSubmit: async (values, { resetForm }) => {
       try {
-        const response = await fetch('http://127.0.0.1:5555/exhibitions', {
+        const response = await fetch('https://art-gallery-imr2.onrender.com/exhibitions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ const ExhibitionsPage = () => {
     },
     onSubmit: async (values) => {
       try {
-        const response = await fetch(`http://127.0.0.1:5555/exhibitions/${formikUpdateEvent.values.id}`, {
+        const response = await fetch(`https://art-gallery-imr2.onrender.com/exhibitions/${formikUpdateEvent.values.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -96,7 +96,7 @@ const ExhibitionsPage = () => {
 
   const fetchExhibitions = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5555/exhibitions');
+      const response = await fetch('https://art-gallery-imr2.onrender.com/exhibitions');
       if (!response.ok) {
         throw new Error('Failed to fetch exhibitions');
       }
@@ -112,7 +112,7 @@ const ExhibitionsPage = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5555/exhibitions/${id}`, {
+      const response = await fetch(`https://art-gallery-imr2.onrender.com/exhibitions/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`

@@ -78,7 +78,7 @@ const UpdateArtwork = ({ artworkId, onUpdate }) => {
 
     const fetchArtwork = async () => {
       try {
-        const response = await fetch(`http://localhost:5555/artworks/${artworkId}`);
+        const response = await fetch(`https://art-gallery-imr2.onrender.com/artworks/${artworkId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch artwork');
         }
@@ -101,7 +101,7 @@ const UpdateArtwork = ({ artworkId, onUpdate }) => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`http://localhost:5555/artworks/${artworkId}`, {
+      const response = await fetch(`https://art-gallery-imr2.onrender.com/artworks/${artworkId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

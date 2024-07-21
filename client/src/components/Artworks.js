@@ -28,7 +28,7 @@ const Artwork = () => {
   // Fetch artworks using fetch()
   const fetchArtworks = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5555/artworks');
+      const response = await fetch('https://art-gallery-imr2.onrender.com/artworks');
       if (!response.ok) {
         throw new Error('Failed to fetch artworks');
       }
@@ -50,7 +50,7 @@ const Artwork = () => {
   // Handle artwork deletion
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5555/artworks/${id}`, {
+      const response = await fetch(`https://art-gallery-imr2.onrender.com/artworks/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${authToken}`,

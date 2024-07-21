@@ -16,7 +16,7 @@ const UserDashboard = () => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const response = await fetch(`http://localhost:5555/users/${user.id}`, {
+      const response = await fetch(`https://art-gallery-imr2.onrender.com/users/${user.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

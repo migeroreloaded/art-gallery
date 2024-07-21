@@ -54,30 +54,7 @@ const UpdateEvent = ({ eventId, onSuccess }) => {
   const [error, setError] = useState('');
   const history = useHistory();
 
-  useEffect(() => {
-    // Fetch existing event details for the given eventId
-    const fetchEventDetails = async () => {
-      try {
-        const response = await fetch(`http://127.0.0.1:5555/exhibitions/${eventId}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch');
-        }
-        const eventData = await response.json();
-        formik.setValues({
-          name: eventData.name,
-          description: eventData.description,
-          startDate: eventData.start_date,
-          endDate: eventData.end_date
-        });
-      } catch (error) {
-        console.error('Error fetching event details:', error);
-        setError('Error fetching event details. Please try again later.');
-      }
-    };
-
-    fetchEventDetails();
-  }, [eventId]); // Fetch details when the component mounts or eventId changes
-
+  // Initialize useFormik outside of useEffect
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -87,7 +64,7 @@ const UpdateEvent = ({ eventId, onSuccess }) => {
     },
     onSubmit: async (values) => {
       try {
-        const response = await fetch(`http://127.0.0.1:5555/exhibitions/${eventId}`, {
+        const response = await fetch(`https://art-gallery-imr2.onrender.com/exhibitions/${eventId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -113,6 +90,30 @@ const UpdateEvent = ({ eventId, onSuccess }) => {
       }
     },
   });
+
+  useEffect(() => {
+    // Fetch existing event details for the given eventId
+    const fetchEventDetails = async () => {
+      try {
+        const response = await fetch(`https://art-gallery-imr2.onrender.com/exhibitions/${eventId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch');
+        }
+        const eventData = await response.json();
+        formik.setValues({
+          name: eventData.name,
+          description: eventData.description,
+          startDate: eventData.start_date,
+          endDate: eventData.end_date
+        });
+      } catch (error) {
+        console.error('Error fetching event details:', error);
+        setError('Error fetching event details. Please try again later.');
+      }
+    };
+
+    fetchEventDetails();
+  }, [eventId, formik]); // Fetch details when the component mounts or eventId changes, and include formik
 
   return (
     <div>

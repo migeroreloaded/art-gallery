@@ -3,7 +3,7 @@ import React from 'react';
 const DeleteEvent = ({ eventId, onDelete }) => {
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:5555/events/${eventId}`, {
+      const response = await fetch(`https://art-gallery-imr2.onrender.com/events/${eventId}`, {
         method: 'DELETE'
       });
 

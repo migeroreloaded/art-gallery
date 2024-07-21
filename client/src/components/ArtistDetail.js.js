@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import './ArtistDetail.css'; // Import CSS file for additional styling
-import { useFormik } from 'formik';
 
 const ArtistDetail = ({ match }) => {
     const [artist, setArtist] = useState(null);
@@ -10,7 +9,7 @@ const ArtistDetail = ({ match }) => {
 
     const fetchArtist = async (artistId) => {
         try {
-            const response = await fetch(`http://127.0.0.1:5555/artists/${artistId}`);
+            const response = await fetch(`https://art-gallery-imr2.onrender.com/artists/${artistId}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch');
             }
@@ -28,29 +27,6 @@ const ArtistDetail = ({ match }) => {
         const artistId = match.params.id; // Get artist ID from URL params
         fetchArtist(artistId);
     }, [match.params.id]);
-
-    const formik = useFormik({
-        initialValues: {
-            id: ''
-        },
-        onSubmit: async (values, { setSubmitting }) => {
-            try {
-                const response = await fetch(`http://127.0.0.1:5555/artists/${values.id}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch');
-                }
-                const data = await response.json();
-                setArtist(data);
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching artist:', error);
-                setError('Error fetching artist details. Please try again later.');
-                setLoading(false);
-            } finally {
-                setSubmitting(false);
-            }
-        },
-    });
 
     if (loading) return <div className="loading">Loading...</div>;
     if (error) return <div className="error">Error: {error}</div>;

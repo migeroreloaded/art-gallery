@@ -70,7 +70,7 @@ const AddArtwork = ({ onSuccess }) => {
     },
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       try {
-        const response = await fetch('http://localhost:5555/artworks', {
+        const response = await fetch('https://art-gallery-imr2.onrender.com/artworks', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
