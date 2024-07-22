@@ -16,7 +16,7 @@ The backend handles database operations using SQLAlchemy with an SQLite database
 
 ## Demo Link
 
-View the live project [here](art-gallery-ui.netlify.app)
+View the live project [here](https://art-gallery-ui.netlify.app/)
 
 ## Table of Contents
 
